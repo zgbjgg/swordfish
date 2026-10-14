@@ -54,7 +54,7 @@ defmodule Swordfish.MixProject do
 
   defp docs do
     [
-      main: "Swordfish",
+      main: "Swordfish.LiveView",
       source_ref: "v#{@version}",
       source_url: "https://github.com/zgbjgg/swordfish"
     ]
