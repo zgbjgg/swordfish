@@ -5,7 +5,7 @@ Open-source declarative AI integration for Elixir/Phoenix. Swordfish lets an LLM
 > **Core rule:** the LLM proposes; Swordfish validates; the application executes.
 
 [![Hex.pm](https://img.shields.io/hexpm/v/.svg)](https://hex.pm/packages/swordfish) 
-[![Build Status](https://github.com/zgbjgg/swordfish/actions/workflows/elixir.yml/badge.svg)](https://github.com/zgbjgg/swordfish/actions/workflows/elixir.yml)
+[![Build Status](https://github.com/zgbjgg/swordfish/actions/workflows/ci.yml/badge.svg)](https://github.com/zgbjgg/swordfish/actions/workflows/ci.yml)
 [![Codecov](https://img.shields.io/codecov/c/github/zgbjgg/swordfish.svg)](https://codecov.io/gh/zgbjgg/swordfish)
 [![License: MIT](https://img.shields.io/github/license/zgbjgg/swordfish.svg)](https://raw.githubusercontent.com/zgbjgg/swordfish/master/LICENSE)
 [![Hex.pm](https://img.shields.io/hexpm/dt/swordfish.svg)](https://hex.pm/packages/swordfish)
