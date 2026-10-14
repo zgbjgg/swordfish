@@ -1,17 +1,21 @@
 defmodule Swordfish.MixProject do
   use Mix.Project
 
+  @version "1.3.0"
+
   def project do
     [
       app: :swordfish,
-      version: "1.3.0",
+      version: @version,
       elixir: "~> 1.11.0",
       description: "Declarative AI integration for Elixir/Phoenix applications with validated queries and actions.",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       package: package(),
-      docs: [main: "readme"]
+      docs: docs(),
+      name: "Swordfish",
+      test_coverage: [tool: ExCoveralls]
     ]
   end
 
@@ -38,8 +42,19 @@ defmodule Swordfish.MixProject do
 
   defp package do
     [
+      name: "swordfish",
+      maintainers: ["Jorge Garrido"],
       licenses: ["MIT"],
-      files: ~w(lib mix.exs README.md CHANGELOG.md LICENSE)
+      files: ~w(lib mix.exs README.md CHANGELOG.md LICENSE),
+      links: %{"GitHub" => "https://github.com/zgbjgg/swordfish"}
+    ]
+  end
+
+  defp docs do
+    [
+      main: "Swordfish",
+      source_ref: "v#{@version}",
+      source_url: "https://github.com/zgbjgg/swordfish"
     ]
   end
 end
