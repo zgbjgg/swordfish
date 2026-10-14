@@ -30,7 +30,9 @@ defmodule Swordfish.MixProject do
       {:jason, "~> 1.0"},
       {:tesla, "~> 1.4.3"},
       {:hackney, "~> 1.17.0"},
-      {:ex_doc, "~> 0.27", only: :dev, runtime: false}
+      {:nimble_parsec, "1.3.1", only: :docs, runtime: false, override: true},
+      {:ex_doc, "0.24.0", only: :docs, runtime: false},
+      {:excoveralls, "~> 0.10", only: :test}
     ]
   end
 
