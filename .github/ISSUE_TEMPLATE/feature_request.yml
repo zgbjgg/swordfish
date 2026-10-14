@@ -1,0 +1,26 @@
+name: Feature request
+description: Propose a focused improvement to Swordfish.
+title: "feature: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What problem should this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe the smallest useful change and its expected behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: invariants
+    attributes:
+      label: Architectural impact
+      description: Explain how the proposal preserves validation boundaries and keeps Application Mode and Query Mode conceptually separate.
+    validations:
+      required: true

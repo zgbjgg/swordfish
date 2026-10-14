@@ -1,0 +1,16 @@
+<%= f = form_for :search, "#", [phx_submit: "search"] %>
+<%= select f, :category, @category_segment %>
+<%= checkbox f, :include_related, value: @filters["include_related"] %>
+<%= radio_button f, :external_only, "yes" %>
+<%= radio_button f, :external_only, "no" %>
+<%= text_input f, :origin, value: @filters["origin"] %>
+<%= live_component @socket, Swordfish.TestSupport.MultiSelectSearch,
+  id: :providers_search,
+  records: @providers,
+  selected_records: @selected_providers %>
+
+<%= select f, :order_at, [{"Desc", :desc}, {"Asc", :asc}], value: @order_at %>
+<%= select f, :static_choice, @static_options %>
+<%= select f, :dynamic_choice, @dynamic_options %>
+<%= select f, :pipeline_choice, @pipeline_options %>
+<%= select f, :local_pipeline_choice, @local_pipeline_options %>

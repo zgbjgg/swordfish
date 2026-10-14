@@ -1,0 +1,24 @@
+# Elixir / Mix
+/_build/
+/deps/
+/cover/
+/doc/
+/*.ez
+/mix.lock
+
+# Editors and language servers
+/.elixir_ls/
+/.vscode/
+/.idea/
+*.swp
+*.swo
+*~
+
+# Runtime artifacts
+erl_crash.dump
+/crash.dump
+
+# Local secrets and environment files
+.env
+.env.*
+!.env.example

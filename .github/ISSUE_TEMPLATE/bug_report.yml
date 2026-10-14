@@ -1,0 +1,37 @@
+name: Bug report
+description: Report a reproducible Swordfish defect.
+title: "bug: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: "Please search existing issues first and never include API keys, credentials, or private application data."
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What happened, and what did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Provide the smallest generic example that reproduces the issue.
+      render: elixir
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Environment
+      description: Elixir, OTP, Swordfish version, and relevant dependency versions.
+    validations:
+      required: true
+  - type: textarea
+    id: checks
+    attributes:
+      label: Checks performed
+      description: Include relevant test output, compiler warnings, or stack traces.
+    validations:
+      required: false
