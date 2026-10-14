@@ -8,7 +8,8 @@ defmodule Swordfish.MixProject do
       app: :swordfish,
       version: @version,
       elixir: "~> 1.11.0",
-      description: "Declarative AI integration for Elixir/Phoenix applications with validated queries and actions.",
+      description:
+        "Declarative AI integration for Elixir/Phoenix applications with validated queries and actions.",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
