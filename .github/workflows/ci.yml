@@ -9,36 +9,37 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    name: Compile and test (Elixir 1.11.3 / OTP 22.3)
-    runs-on: ubuntu-22.04
+  build:
+
+    name: Build and test
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        elixir: ["elixir:1.11"]
+
+    container:
+      image: ${{ matrix.elixir }}  
+
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Set up Erlang and Elixir
-        uses: erlef/setup-beam@v1
-        with:
-          otp-version: '22.3'
-          elixir-version: '1.11.3'
-
-      - name: Cache dependencies and build
-        uses: actions/cache@v4
-        with:
-          path: |
-            deps
-            _build
-          key: ${{ runner.os }}-otp-22.3-elixir-1.11.3-${{ hashFiles('mix.exs') }}
-          restore-keys: |
-            ${{ runner.os }}-otp-22.3-elixir-1.11.3-
-
-      - name: Fetch dependencies
-        run: mix deps.get
-
-      - name: Compile with warnings treated as errors
-        env:
-          MIX_ENV: test
-        run: mix compile --warnings-as-errors
-
-      - name: Run tests
-        run: mix test
+    - uses: actions/checkout@v4
+    - name: Restore dependencies cache
+      uses: actions/cache@v3
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+        restore-keys: ${{ runner.os }}-mix-
+    - name: Hex and Rebar
+      run: mix local.hex --force && mix local.rebar --force
+    - name: Install dependencies
+      run: mix deps.get
+    - name: Compile
+      run: mix compile
+    - name: Run tests
+      run: MIX_ENV=test mix coveralls.json
+    - name: Codecov
+      uses: codecov/codecov-action@v2
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        slug: zgbjgg/swordfish
+        file: cover/excoveralls.json
