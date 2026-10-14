@@ -30,6 +30,24 @@ Open-source declarative AI integration for Elixir/Phoenix. Swordfish lets an LLM
 - `assigns` enriches discovered fields but never replaces an application resolver.
 - Provider schemas hide Swordfish-internal discovery metadata while preserving the information needed by the model to choose valid entity IDs.
 
+## Installation
+
+Add `swordfish` to your dependencies in `mix.exs`:
+
+```elixir
+def deps do
+  [
+    {:swordfish, "~> 1.3.0"}
+  ]
+end
+```
+
+Then fetch dependencies:
+
+```bash
+mix deps.get
+```
+
 ## End-to-end flow
 
 ```text
@@ -184,6 +202,10 @@ Swordfish provides the discovery, schema, provider, intent-validation, and runti
 - displaying provider responses;
 - preserving conversation or UI state when required.
 
+## Contributing
+
+Bug reports, focused improvements, and documentation updates are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
+
 ## Compatibility
 
 Swordfish v1.3.0 targets Elixir 1.11.3 and Ecto 3.6.x. The Ecto compiler uses the internal runtime join builder to support dynamically selected, allowlisted named bindings without relying on newer `as:` interpolation behavior.
@@ -329,7 +351,6 @@ The v1.3.0 release was validated by the project test suite with **138 tests and 
 ## Open-source repository
 
 - License: MIT (see `LICENSE`).
-- Contribution and coding rules: `CONTRIBUTING.md` and `AGENTS.md`.
+- Contribution guidelines: `CONTRIBUTING.md`.
 - Change history: `CHANGELOG.md`.
-- GitHub first-push and repository settings checklist: `GITHUB_RELEASE.md`.
 - Pull requests and bug reports should include reproducible generic examples and actual validation output. Never include credentials or private application data.
