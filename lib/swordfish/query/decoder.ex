@@ -68,8 +68,19 @@ defmodule Swordfish.Query.Decoder do
   end
 
   defp resolve_allowed_path(resource, [part | rest], acc) when is_binary(part) do
-    allowed_association(resource, part)
-    |> case do
+    case allowed_field(resource, part) do
+      {:ok, _field} ->
+        {:error, {:nested_path_not_allowed_for_scalar_field, resource.name, part}}
+
+      :error ->
+        resolve_association_path(resource, part, rest, acc)
+    end
+  end
+
+  defp resolve_allowed_path(_resource, _path, _acc), do: {:error, :invalid_path}
+
+  defp resolve_association_path(resource, part, rest, acc) do
+    case allowed_association(resource, part) do
       {:ok, association} ->
         next =
           Resource.new(
@@ -86,8 +97,6 @@ defmodule Swordfish.Query.Decoder do
         {:error, {:association_not_allowed, resource.name, part}}
     end
   end
-
-  defp resolve_allowed_path(_resource, _path, _acc), do: {:error, :invalid_path}
 
   defp allowed_field(%Resource{fields: fields}, name) do
     Enum.find(fields, &(Atom.to_string(&1) == name))
