@@ -4,7 +4,6 @@
 /cover/
 /doc/
 /*.ez
-/mix.lock
 
 # Editors and language servers
 /.elixir_ls/
