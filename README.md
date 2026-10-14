@@ -184,40 +184,6 @@ Swordfish provides the discovery, schema, provider, intent-validation, and runti
 - displaying provider responses;
 - preserving conversation or UI state when required.
 
-## AI-assisted development / vibecoding
-
-Swordfish is designed to be worked on with AI coding agents. The repository includes a canonical agent guide and architecture references:
-
-- `AGENTS.md` — rules all coding agents must follow.
-- `CLAUDE.md` — Claude-specific entry point.
-- `ARCHITECTURE.md` — architectural boundaries and invariants.
-- `VIBECODING.md` — recommended AI-assisted development workflow.
-
-Agents should read `AGENTS.md` and `ARCHITECTURE.md` before changing code. The stable baseline is intentionally conservative: agents should prefer small, test-backed changes over broad refactors.
-
-## Development conventions
-
-The v1.3.0 stable baseline follows these strict coding conventions. They apply to
-production code, tests, and future contributions:
-
-1. **Never use `with`.** Use `case` and pattern matching instead.
-2. **Avoid anonymous functions in `Enum` calls.** Prefer named functions or captures such as `&function/1`.
-3. **Every public function must have `@doc` and `@spec`.**
-4. **Keep `case` branches small.** If a `case` has more than three branches, prefer pattern matching or split the responsibility into focused functions.
-5. **Think in pipelines.** Functions should read as input → transformations → decision → output.
-6. **Prefer pipeline-based decisions.** When a `case` follows a transformation, express the transformation as a pipeline into the `case` where practical.
-7. **Never nest `case`.** Use pipelines, helper functions, and pattern matching instead.
-8. **Do not create one-call wrapper functions.** If a function only delegates to another function without adding semantic value, remove the wrapper or use a default argument when appropriate.
-9. **Keep same-name/same-arity clauses grouped together.** All clauses of a function must be contiguous to avoid compiler warnings and preserve readable pattern matching.
-10. **Public application resolvers only.** Swordfish must not introspect or bypass `defp`; application capabilities exposed to Swordfish must be public.
-11. **Keep application logic in the application.** Swordfish discovers and validates capabilities; it must not recreate business rules or generate resolver logic from application conditionals.
-12. **Keep Application Mode and Query Mode conceptually separate.** Shared infrastructure is allowed, but their semantic pipelines must not be collapsed into one abstraction.
-13. **Keep Swordfish messages and documentation in English.** This includes errors, descriptions, and user-visible library messages.
-14. **Keep tests and examples generic.** Do not use private domain names or fixtures from a consuming application; use generic names such as `Northwind`, providers, accounts, records, and search filters.
-
-These conventions are part of the stable v1.3.0 development baseline and should be
-maintained in subsequent releases.
-
 ## Compatibility
 
 Swordfish v1.3.0 targets Elixir 1.11.3 and Ecto 3.6.x. The Ecto compiler uses the internal runtime join builder to support dynamically selected, allowlisted named bindings without relying on newer `as:` interpolation behavior.
