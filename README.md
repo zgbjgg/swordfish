@@ -1,12 +1,16 @@
 # Swordfish
 
-**Swordfish v1.3.0 — stable release**
-
-> **Stable baseline:** v1.3.0 has been validated by the project test suite with 138 tests and 0 failures.
-
 Open-source declarative AI integration for Elixir/Phoenix. Swordfish lets an LLM propose structured queries or application actions while Elixir remains responsible for discovery, validation, and execution.
 
 > **Core rule:** the LLM proposes; Swordfish validates; the application executes.
+
+[![Hex.pm](https://img.shields.io/hexpm/v/.svg)](https://hex.pm/packages/swordfish) 
+[![Build Status](https://github.com/zgbjgg/swordfish/actions/workflows/elixir.yml/badge.svg)](https://github.com/zgbjgg/swordfish/actions/workflows/elixir.yml)
+[![Codecov](https://img.shields.io/codecov/c/github/zgbjgg/swordfish.svg)](https://codecov.io/gh/zgbjgg/swordfish)
+[![License: MIT](https://img.shields.io/github/license/zgbjgg/swordfish.svg)](https://raw.githubusercontent.com/zgbjgg/swordfish/master/LICENSE)
+[![Hex.pm](https://img.shields.io/hexpm/dt/swordfish.svg)](https://hex.pm/packages/swordfish)
+[![Hex.pm](https://img.shields.io/hexpm/dw/swordfish.svg)](https://hex.pm/packages/swordfish)
+[![Documentation](https://img.shields.io/badge/documentation-gray)](https://hexdocs.pm/swordfish)
 
 ## What changed in v1.3.0
 
