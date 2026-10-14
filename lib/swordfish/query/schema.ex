@@ -1,5 +1,7 @@
 defmodule Swordfish.Query.Schema do
-  @moduledoc "Generates provider-neutral JSON Schema for Swordfish.Query."
+  @moduledoc """
+  Generates provider-neutral JSON Schema for Swordfish.Query.
+  """
 
   alias Swordfish.Resource
   alias Swordfish.Query.Operator
@@ -23,6 +25,7 @@ defmodule Swordfish.Query.Schema do
         "filters" => filters_schema(resource),
         "limit" => limit_schema()
       },
+      "required" => ["filters", "limit"],
       "additionalProperties" => false
     }
   end
@@ -42,25 +45,56 @@ defmodule Swordfish.Query.Schema do
         "path" => %{
           "type" => "array",
           "items" => %{"type" => "string"},
-          "description" => "Semantic path, for example [\"customer\", \"name\"]."
+          "description" =>
+            "Field path. Scalar fields must use a one-element path. " <>
+              "Allowed scalar fields: #{allowed_fields(resource)}."
         },
         "operator" => %{
           "type" => "string",
-          "enum" => Operator.all() |> Enum.map(&Atom.to_string/1)
+          "enum" => Enum.map(Operator.all(), &Atom.to_string/1)
         },
-        "value" => %{"description" => "Filter value."}
+        "value" => value_schema()
       },
-      "required" => ["path", "operator"],
-      "additionalProperties" => false,
-      "x-resource" => Atom.to_string(resource.name)
+      "required" => ["path", "operator", "value"],
+      "additionalProperties" => false
+    }
+  end
+
+  defp value_schema do
+    %{
+      "description" =>
+        "Filter value. Use a scalar for comparison operators and an array for in or not_in.",
+      "anyOf" => [
+        %{"type" => "string"},
+        %{"type" => "number"},
+        %{"type" => "integer"},
+        %{"type" => "boolean"},
+        %{"type" => "null"},
+        %{
+          "type" => "array",
+          "items" => %{
+            "anyOf" => [
+              %{"type" => "string"},
+              %{"type" => "number"},
+              %{"type" => "integer"},
+              %{"type" => "boolean"},
+              %{"type" => "null"}
+            ]
+          }
+        }
+      ]
     }
   end
 
   defp limit_schema do
     %{
-      "type" => "integer",
+      "type" => ["integer", "null"],
       "minimum" => 1,
       "maximum" => 1000
     }
+  end
+
+  defp allowed_fields(%Resource{fields: fields}) do
+    Enum.map_join(fields, ", ", &Atom.to_string/1)
   end
 end

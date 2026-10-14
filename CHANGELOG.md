@@ -2,6 +2,14 @@
 
 All notable changes to Swordfish are documented here.
 
+## [1.3.1] - 2026-10-14
+
+- Fixed OpenAI tool schema validation: Updated Swordfish.Query.Schema to prevent HTTP 400 errors when submitting resource query tools.
+- Improved filter value schemas: Added explicit support for scalar values and arrays, including in and not_in operators.
+- Simplified path schemas: Removed array-valued enums from path; allowed fields and associations remain validated by Swordfish.Query.Decoder.
+- Removed custom schema metadata: Removed x-resource from generated tool parameters.
+- Improved schema compatibility: Explicitly declared required properties and disabled additional properties in the root query schema.
+
 ## [1.3.0] - 2026-10-03
 
 - Removed application-specific domain terminology from documentation, examples, and tests.

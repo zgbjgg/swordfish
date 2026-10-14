@@ -12,6 +12,14 @@ Open-source declarative AI integration for Elixir/Phoenix. Swordfish lets an LLM
 [![Hex.pm](https://img.shields.io/hexpm/dw/swordfish.svg)](https://hex.pm/packages/swordfish)
 [![Documentation](https://img.shields.io/badge/documentation-gray)](https://hexdocs.pm/swordfish)
 
+## What changed in v1.3.1
+
+- Fixed OpenAI tool schema validation: Updated Swordfish.Query.Schema to prevent HTTP 400 errors when submitting resource query tools.
+- Improved filter value schemas: Added explicit support for scalar values and arrays, including in and not_in operators.
+- Simplified path schemas: Removed array-valued enums from path; allowed fields and associations remain validated by Swordfish.Query.Decoder.
+- Removed custom schema metadata: Removed x-resource from generated tool parameters.
+- Improved schema compatibility: Explicitly declared required properties and disabled additional properties in the root query schema.
+
 ## What changed in v1.3.0
 
 - Removed application-specific domain terminology from tests, examples, and documentation.
