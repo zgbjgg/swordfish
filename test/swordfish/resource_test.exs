@@ -67,14 +67,12 @@ defmodule Swordfish.ResourceTest do
   test "rejects invalid operators" do
     query = Q.query(Ticket, where: Q.condition(:status, :wat, "open"))
 
-    assert {:error, {:invalid_operator, :wat}} =
-             Validator.validate(query, resource())
+    assert {:error, {:invalid_operator, :wat}} = Validator.validate(query, resource())
   end
 
   test "rejects invalid resource" do
     query = Q.query(Customer, where: Q.condition(:name, :eq, "Pato"))
 
-    assert {:error, :resource_mismatch} =
-             Validator.validate(query, resource())
+    assert {:error, :resource_mismatch} = Validator.validate(query, resource())
   end
 end

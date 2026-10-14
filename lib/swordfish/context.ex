@@ -11,27 +11,37 @@ defmodule Swordfish.Context do
 
   defstruct values: %{}
 
-  @doc "Creates an empty Swordfish context."
+  @doc """
+  Creates an empty Swordfish context.
+  """
   @spec new() :: t()
   def new, do: %__MODULE__{}
 
-  @doc "Creates a context from a map of already-approved values."
+  @doc """
+  Creates a context from a map of already-approved values.
+  """
   @spec new(map()) :: t()
   def new(values) when is_map(values), do: %__MODULE__{values: values}
 
-  @doc "Adds an approved value to the context."
+  @doc """
+  Adds an approved value to the context.
+  """
   @spec put(t(), atom(), term()) :: t()
   def put(%__MODULE__{values: values} = context, key, value) when is_atom(key) do
     %{context | values: Map.put(values, key, value)}
   end
 
-  @doc "Returns an approved context value."
+  @doc """
+  Returns an approved context value.
+  """
   @spec get(t(), atom(), term()) :: term()
   def get(%__MODULE__{values: values}, key, default \\ nil) do
     Map.get(values, key, default)
   end
 
-  @doc "Returns a nested approved context value by path."
+  @doc """
+  Returns a nested approved context value by path.
+  """
   @spec get_path(t() | term(), [atom()] | term()) :: {:ok, term()} | :error
   def get_path(value, path)
 
@@ -50,5 +60,4 @@ defmodule Swordfish.Context do
   end
 
   def get_path(_value, _path), do: :error
-
 end

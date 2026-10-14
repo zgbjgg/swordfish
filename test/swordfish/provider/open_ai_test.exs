@@ -39,8 +39,8 @@ defmodule Swordfish.Provider.OpenAITest do
     assert {:ok,
             %{
               type: :tool_call,
-              tool_call: %{id: "call-1", name: "query_tickets", arguments: %{"limit" => 20}
-            }}} =
+              tool_call: %{id: "call-1", name: "query_tickets", arguments: %{"limit" => 20}}
+            }} =
              OpenAI.chat(
                [%{"role" => "user", "content" => "show tickets"}],
                [tool],
@@ -76,8 +76,7 @@ defmodule Swordfish.Provider.OpenAITest do
       })
     end)
 
-    assert {:ok, %{type: :message, content: "There are no open tickets."}} =
-             OpenAI.chat([], [])
+    assert {:ok, %{type: :message, content: "There are no open tickets."}} = OpenAI.chat([], [])
   end
 
   test "returns an error when the API key is missing" do
@@ -100,8 +99,7 @@ defmodule Swordfish.Provider.OpenAITest do
       })
     end)
 
-    assert {:ok, %{type: :message, content: "ok"}} =
-             OpenAI.chat([], [], api_key: "ignored")
+    assert {:ok, %{type: :message, content: "ok"}} = OpenAI.chat([], [], api_key: "ignored")
 
     assert_received {:request, request}
     assert {"authorization", "Bearer test-key"} in request.headers

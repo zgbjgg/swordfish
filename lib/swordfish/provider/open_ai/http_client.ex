@@ -3,9 +3,11 @@ defmodule Swordfish.Provider.OpenAI.HTTPClient do
 
   use Tesla
 
-  plug Tesla.Middleware.JSON
+  plug(Tesla.Middleware.JSON)
 
-  @doc "Executes an HTTP POST request using Tesla and the configured HTTP adapter."
+  @doc """
+  Executes an HTTP POST request using Tesla and the configured HTTP adapter.
+  """
   @spec request(String.t(), list(), map(), keyword()) ::
           {:ok, non_neg_integer(), binary() | map()} | {:error, term()}
   def request(endpoint, headers, body, opts) do

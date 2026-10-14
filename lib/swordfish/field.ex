@@ -3,7 +3,8 @@ defmodule Swordfish.Field do
   Provider-independent representation of an application input field.
   """
 
-  @type type :: :string | :integer | :boolean | :date | :datetime | :enum | :entity | :fn | :unknown
+  @type type ::
+          :string | :integer | :boolean | :date | :datetime | :enum | :entity | :fn | :unknown
   @type source :: term()
 
   @type t :: %__MODULE__{

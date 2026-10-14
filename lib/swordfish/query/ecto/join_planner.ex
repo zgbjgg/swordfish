@@ -25,7 +25,9 @@ defmodule Swordfish.Query.Ecto.JoinPlanner do
           bindings: %{optional([atom()]) => atom()}
         }
 
-  @doc "Builds an association join plan for a validated query."
+  @doc """
+  Builds an association join plan for a validated query.
+  """
   @spec plan(Query.t(), Resource.t()) :: {:ok, t()} | {:error, term()}
   def plan(%Query{} = query, %Resource{} = resource) do
     paths =
@@ -46,15 +48,16 @@ defmodule Swordfish.Query.Ecto.JoinPlanner do
       |> Enum.sort_by(&length/1)
       |> Enum.map(&build_join/1)
 
-    bindings =
-      Enum.reduce(associations, %{[] => :root}, &put_binding/2)
+    bindings = Enum.reduce(associations, %{[] => :root}, &put_binding/2)
 
     _ = resource
 
     {:ok, %{joins: joins, bindings: bindings}}
   end
 
-  @doc "Returns the Ecto binding for a semantic path."
+  @doc """
+  Returns the Ecto binding for a semantic path.
+  """
   @spec binding_for_path(t(), [atom()]) :: atom()
   def binding_for_path(%{bindings: bindings}, path) do
     association_path = Enum.drop(path, -1)

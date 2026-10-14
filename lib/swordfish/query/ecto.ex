@@ -51,7 +51,10 @@ defmodule Swordfish.Query.Ecto do
     Enum.reduce(joins, query, &apply_join/2)
   end
 
-  defp apply_join(%{association: association, binding: binding, parent_binding: parent_binding}, query) do
+  defp apply_join(
+         %{association: association, binding: binding, parent_binding: parent_binding},
+         query
+       ) do
     parent_index = Map.get(query.aliases, parent_binding, 0)
     Builder.apply_association_join(query, association, binding, parent_index)
   end
@@ -146,9 +149,16 @@ defmodule Swordfish.Query.Ecto do
   defp compile_condition(:lte, field_expr, value), do: dynamic(^field_expr <= ^value)
   defp compile_condition(:in, field_expr, value), do: dynamic(^field_expr in ^value)
   defp compile_condition(:not_in, field_expr, value), do: dynamic(^field_expr not in ^value)
-  defp compile_condition(:contains, field_expr, value), do: dynamic(like(^field_expr, ^"%#{value}%"))
-  defp compile_condition(:starts_with, field_expr, value), do: dynamic(like(^field_expr, ^"#{value}%"))
-  defp compile_condition(:ends_with, field_expr, value), do: dynamic(like(^field_expr, ^"%#{value}"))
+
+  defp compile_condition(:contains, field_expr, value),
+    do: dynamic(like(^field_expr, ^"%#{value}%"))
+
+  defp compile_condition(:starts_with, field_expr, value),
+    do: dynamic(like(^field_expr, ^"#{value}%"))
+
+  defp compile_condition(:ends_with, field_expr, value),
+    do: dynamic(like(^field_expr, ^"%#{value}"))
+
   defp compile_condition(:is_nil, field_expr, _value), do: dynamic(is_nil(^field_expr))
   defp compile_condition(:is_not_nil, field_expr, _value), do: dynamic(not is_nil(^field_expr))
 end

@@ -5,7 +5,9 @@ defmodule Swordfish.Resolver do
 
   alias Swordfish.Context
 
-  @doc "Resolves a discovered source using approved runtime context."
+  @doc """
+  Resolves a discovered source using approved runtime context.
+  """
   @spec resolve(term()) :: {:ok, term()} | {:error, term()}
   @spec resolve(term(), Context.t()) :: {:ok, term()} | {:error, term()}
   def resolve(source, context \\ Context.new())
@@ -100,7 +102,8 @@ defmodule Swordfish.Resolver do
           :error -> {:context, path}
         end
 
-      node -> node
+      node ->
+        node
     end)
   end
 

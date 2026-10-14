@@ -17,13 +17,17 @@ defmodule Swordfish.Contract do
     fields: []
   ]
 
-  @doc "Builds a contract from a name and discovered fields."
+  @doc """
+  Builds a contract from a name and discovered fields.
+  """
   @spec new(atom(), [Field.t()]) :: t()
   def new(name, fields) when is_atom(name) and is_list(fields) do
     %__MODULE__{name: name, fields: fields}
   end
 
-  @doc "Builds a contract with optional metadata."
+  @doc """
+  Builds a contract with optional metadata.
+  """
   @spec new(atom(), [Field.t()], keyword()) :: t()
   def new(name, fields, options) when is_atom(name) and is_list(fields) and is_list(options) do
     %__MODULE__{

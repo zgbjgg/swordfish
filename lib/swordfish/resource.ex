@@ -26,7 +26,9 @@ defmodule Swordfish.Resource do
     max_depth: 2
   ]
 
-  @doc "Creates a Swordfish resource from an explicit allowlist."
+  @doc """
+  Creates a Swordfish resource from an explicit allowlist.
+  """
   @spec new(atom(), module(), keyword()) :: t()
   def new(name, schema, opts \\ []) when is_atom(name) and is_atom(schema) do
     %__MODULE__{
@@ -38,7 +40,9 @@ defmodule Swordfish.Resource do
     }
   end
 
-  @doc "Creates a resource using Ecto schema introspection for fields."
+  @doc """
+  Creates a resource using Ecto schema introspection for fields.
+  """
   @spec from_schema(atom(), module(), keyword()) :: t()
   def from_schema(name, schema, opts \\ []) do
     opts
@@ -48,17 +52,23 @@ defmodule Swordfish.Resource do
     |> build_resource(schema)
   end
 
-  @doc "Returns whether a field is exposed by the resource."
+  @doc """
+  Returns whether a field is exposed by the resource.
+  """
   @spec field_allowed?(t(), atom()) :: boolean()
   def field_allowed?(%__MODULE__{fields: fields}, field), do: field in fields
 
-  @doc "Returns metadata for an exposed association."
+  @doc """
+  Returns metadata for an exposed association.
+  """
   @spec association(t(), atom()) :: association() | nil
   def association(%__MODULE__{associations: associations}, name) do
     Map.get(associations, name)
   end
 
-  @doc "Returns the Ecto type of a schema field."
+  @doc """
+  Returns the Ecto type of a schema field.
+  """
   @spec field_type(t(), atom()) :: term() | nil
   def field_type(%__MODULE__{schema: schema}, field) do
     Code.ensure_loaded(schema)

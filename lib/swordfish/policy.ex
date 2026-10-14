@@ -14,7 +14,9 @@ defmodule Swordfish.Policy do
 
   defstruct constraints: []
 
-  @doc "Creates an empty policy."
+  @doc """
+  Creates an empty policy.
+  """
   @spec new(keyword()) :: t()
   def new(opts \\ []) do
     %__MODULE__{
@@ -22,14 +24,18 @@ defmodule Swordfish.Policy do
     }
   end
 
-  @doc "Adds an application-owned query constraint to a policy."
+  @doc """
+  Adds an application-owned query constraint to a policy.
+  """
   @spec add_constraint(t(), constraint()) :: t()
   def add_constraint(%__MODULE__{constraints: constraints} = policy, constraint)
       when is_function(constraint, 1) do
     %{policy | constraints: constraints ++ [constraint]}
   end
 
-  @doc "Applies all policy constraints to a query."
+  @doc """
+  Applies all policy constraints to a query.
+  """
   @spec apply(t(), Swordfish.Query.t()) :: Swordfish.Query.t()
   def apply(%__MODULE__{constraints: constraints}, query) do
     Enum.reduce(constraints, query, &apply_constraint/2)

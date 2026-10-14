@@ -3,7 +3,9 @@ defmodule Swordfish.Query.Value do
 
   alias Swordfish.Query.RelativeTime
 
-  @doc "Validates a value against an Ecto field type."
+  @doc """
+  Validates a value against an Ecto field type.
+  """
   @spec valid_for_type?(term(), term()) :: boolean()
   def valid_for_type?(value, type) do
     type
@@ -20,9 +22,11 @@ defmodule Swordfish.Query.Value do
   defp value_type_valid?(:utc_datetime, value), do: match?(%DateTime{}, value)
   defp value_type_valid?(:id, value), do: is_integer(value) or is_binary(value)
   defp value_type_valid?({:parameterized, _}, _value), do: true
+
   defp value_type_valid?({:array, inner}, value) when is_list(value) do
     Enum.all?(value, &valid_for_type?(&1, inner))
   end
+
   defp value_type_valid?(nil, _value), do: false
   defp value_type_valid?(_type, _value), do: true
 end

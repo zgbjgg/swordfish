@@ -39,8 +39,8 @@ defmodule Swordfish.Provider.AnthropicTest do
     assert {:ok,
             %{
               type: :tool_call,
-              tool_call: %{id: "toolu-1", name: "query_tickets", arguments: %{"limit" => 20}
-            }}} =
+              tool_call: %{id: "toolu-1", name: "query_tickets", arguments: %{"limit" => 20}}
+            }} =
              Anthropic.chat(
                [%{"role" => "user", "content" => "show tickets"}],
                [tool],
@@ -71,10 +71,13 @@ defmodule Swordfish.Provider.AnthropicTest do
     end)
 
     assert {:ok, %{type: :message, content: "ok"}} =
-             Anthropic.chat([
-               %{"role" => "system", "content" => "Be concise."},
-               %{"role" => "user", "content" => "hello"}
-             ], [])
+             Anthropic.chat(
+               [
+                 %{"role" => "system", "content" => "Be concise."},
+                 %{"role" => "user", "content" => "hello"}
+               ],
+               []
+             )
 
     assert_received {:request, request}
     payload = Jason.decode!(request.body)
@@ -107,8 +110,7 @@ defmodule Swordfish.Provider.AnthropicTest do
       Tesla.Mock.json(%{"content" => [%{"type" => "text", "text" => "ok"}]})
     end)
 
-    assert {:ok, %{type: :message, content: "ok"}} =
-             Anthropic.chat([], [], api_key: "ignored")
+    assert {:ok, %{type: :message, content: "ok"}} = Anthropic.chat([], [], api_key: "ignored")
 
     assert_received {:request, request}
     assert {"x-api-key", "test-key"} in request.headers

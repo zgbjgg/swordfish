@@ -14,13 +14,17 @@ defmodule Swordfish.Action.Capability do
 
   defstruct [:module, :name, assigns: []]
 
-  @doc "Creates an action capability from a discovery declaration."
+  @doc """
+  Creates an action capability from a discovery declaration.
+  """
   @spec new(module(), atom(), keyword()) :: t()
   def new(module, name, assigns) when is_atom(module) and is_atom(name) and is_list(assigns) do
     %__MODULE__{module: module, name: name, assigns: assigns}
   end
 
-  @doc "Discovers and resolves an action capability using approved runtime context."
+  @doc """
+  Discovers and resolves an action capability using approved runtime context.
+  """
   @spec resolve(t(), Context.t()) :: {:ok, Tool.t()} | {:error, term()}
   def resolve(%__MODULE__{} = capability, %Context{} = context) do
     capability

@@ -10,15 +10,14 @@ defmodule Swordfish.ActionCapabilityTest do
       Capability.new(
         ApplicationInputs,
         :search,
-        [
-          providers: [
-            type: :entity,
-            multiple?: true,
-            value_type: :integer,
-            struct: [:id, :name]
-          ]
+        providers: [
+          type: :entity,
+          multiple?: true,
+          value_type: :integer,
+          struct: [:id, :name]
         ]
       )
+
     context = Context.new(%{user: %{id: 42}})
 
     assert {:ok, resolved_tool} = Capability.resolve(capability, context)

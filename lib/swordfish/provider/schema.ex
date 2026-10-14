@@ -1,7 +1,9 @@
 defmodule Swordfish.Provider.Schema do
   @moduledoc "Converts provider-neutral Swordfish schemas into JSON-compatible tool schemas."
 
-  @doc "Converts a Swordfish schema into a JSON-compatible provider schema."
+  @doc """
+  Converts a Swordfish schema into a JSON-compatible provider schema.
+  """
   @spec to_json(map()) :: map()
   def to_json(schema) when is_map(schema) do
     schema
@@ -85,7 +87,10 @@ defmodule Swordfish.Provider.Schema do
   defp format_entity_option({id, nil}), do: "#{id}"
   defp format_entity_option({id, label}), do: "#{id} = #{label}"
 
-  defp put_entity_provider_metadata(%{type: :array, items: items} = schema, %{ids: ids, description: description})
+  defp put_entity_provider_metadata(%{type: :array, items: items} = schema, %{
+         ids: ids,
+         description: description
+       })
        when is_map(items) do
     %{schema | items: Map.merge(items, %{enum: ids, description: description})}
   end
@@ -106,8 +111,13 @@ defmodule Swordfish.Provider.Schema do
   defp internal_schema_entry?({key, nil}) when key in [:description, "description"], do: true
   defp internal_schema_entry?({key, _value}) when key in [:name, "name"], do: true
   defp internal_schema_entry?({key, _value}) when key in [:entities, "entities"], do: true
-  defp internal_schema_entry?({key, _value}) when key in [:entity_struct, "entity_struct"], do: true
-  defp internal_schema_entry?({key, _value}) when key in [:entity_source, "entity_source"], do: true
+
+  defp internal_schema_entry?({key, _value}) when key in [:entity_struct, "entity_struct"],
+    do: true
+
+  defp internal_schema_entry?({key, _value}) when key in [:entity_source, "entity_source"],
+    do: true
+
   defp internal_schema_entry?({key, _value}) when key in [:enum_source, "enum_source"], do: true
   defp internal_schema_entry?(_entry), do: false
 

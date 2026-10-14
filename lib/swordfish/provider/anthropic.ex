@@ -14,7 +14,9 @@ defmodule Swordfish.Provider.Anthropic do
   @default_max_tokens 1024
   @anthropic_version "2023-06-01"
 
-  @doc "Sends messages and provider-neutral tools to the Anthropic Messages API."
+  @doc """
+  Sends messages and provider-neutral tools to the Anthropic Messages API.
+  """
   @spec chat(list(), list(Swordfish.Tool.t()), keyword()) ::
           {:ok, map()} | {:error, term()}
   def chat(messages, tools, opts \\ []) do
@@ -22,7 +24,10 @@ defmodule Swordfish.Provider.Anthropic do
     api_key = Keyword.get(config, :api_key)
     endpoint = Keyword.get(opts, :endpoint, Keyword.get(config, :endpoint, @default_endpoint))
     model = Keyword.get(opts, :model, Keyword.get(config, :model, @default_model))
-    max_tokens = Keyword.get(opts, :max_tokens, Keyword.get(config, :max_tokens, @default_max_tokens))
+
+    max_tokens =
+      Keyword.get(opts, :max_tokens, Keyword.get(config, :max_tokens, @default_max_tokens))
+
     http_client = Keyword.get(opts, :http_client, Swordfish.Provider.Anthropic.HTTPClient)
     http_adapter_options = Keyword.get(config, :http_adapter_options, [])
     request_opts = Keyword.put(opts, :http_adapter_options, http_adapter_options)
@@ -52,7 +57,8 @@ defmodule Swordfish.Provider.Anthropic do
     |> handle_request_response()
   end
 
-  defp handle_request_response({:ok, status, response_body}) when status >= 200 and status < 300 do
+  defp handle_request_response({:ok, status, response_body})
+       when status >= 200 and status < 300 do
     decode_response(response_body)
   end
 
@@ -72,7 +78,6 @@ defmodule Swordfish.Provider.Anthropic do
     ]
   end
 
-
   defp split_system_messages(messages) do
     {system_messages, conversation} = Enum.split_with(messages, &system_message?/1)
     {system_content(system_messages), conversation}
@@ -82,7 +87,9 @@ defmodule Swordfish.Provider.Anthropic do
   defp system_message?(_message), do: false
 
   defp system_content([]), do: nil
-  defp system_content(messages), do: Enum.map(messages, &system_message_content/1) |> Enum.join("\n")
+
+  defp system_content(messages),
+    do: Enum.map(messages, &system_message_content/1) |> Enum.join("\n")
 
   defp system_message_content(%{"role" => "system", "content" => content}), do: content
 
@@ -129,7 +136,8 @@ defmodule Swordfish.Provider.Anthropic do
          "id" => id,
          "name" => name,
          "input" => input
-       }) when is_map(input) do
+       })
+       when is_map(input) do
     {:ok,
      %{
        type: :tool_call,

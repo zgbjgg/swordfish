@@ -22,7 +22,9 @@ defmodule Swordfish.Action do
     :capability
   ]
 
-  @doc "Creates a Swordfish action."
+  @doc """
+  Creates a Swordfish action.
+  """
   @spec new(atom(), keyword()) :: t()
   def new(name, opts \\ []) when is_atom(name) do
     %__MODULE__{

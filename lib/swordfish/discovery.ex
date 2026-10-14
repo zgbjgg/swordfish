@@ -10,7 +10,8 @@ defmodule Swordfish.Discovery do
   Discovers an application capability contract from a module source file.
   """
   @spec discover_contract(module(), atom()) :: {:ok, Swordfish.Contract.t()} | {:error, term()}
-  @spec discover_contract(module(), atom(), keyword()) :: {:ok, Swordfish.Contract.t()} | {:error, term()}
+  @spec discover_contract(module(), atom(), keyword()) ::
+          {:ok, Swordfish.Contract.t()} | {:error, term()}
   def discover_contract(module, name, opts \\ [])
       when is_atom(module) and is_atom(name) and is_list(opts) do
     discover(module, opts)
@@ -63,7 +64,8 @@ defmodule Swordfish.Discovery do
     end
   end
 
-  defp parse_source({:error, reason}, _module, _explicit_assigns), do: {:error, {:parse_failed, reason}}
+  defp parse_source({:error, reason}, _module, _explicit_assigns),
+    do: {:error, {:parse_failed, reason}}
 
   @doc """
   Discovers a field from a field name and its AST expression.
@@ -74,15 +76,17 @@ defmodule Swordfish.Discovery do
     |> case do
       {:ok, source} ->
         {:ok, build_field(name, source)}
-      :dynamic -> :dynamic
-      :error -> :error
+
+      :dynamic ->
+        :dynamic
+
+      :error ->
+        :error
     end
   end
 
-
   defp find_module_ast(ast, module) do
-    {_ast, found} =
-      Macro.prewalk(ast, nil, &find_module_node(&1, &2, module))
+    {_ast, found} = Macro.prewalk(ast, nil, &find_module_node(&1, &2, module))
 
     found || :error
   end
@@ -149,15 +153,18 @@ defmodule Swordfish.Discovery do
 
       _ ->
         assigns_fields
-        |> Enum.filter(&(&1.name in explicit_assign_names(explicit_assigns) or explicit_assigns == []))
-        |> Enum.map(&apply_explicit_assign_metadata(&1, explicit_assign_spec(explicit_assigns, &1.name)))
+        |> Enum.filter(
+          &(&1.name in explicit_assign_names(explicit_assigns) or explicit_assigns == [])
+        )
+        |> Enum.map(
+          &apply_explicit_assign_metadata(&1, explicit_assign_spec(explicit_assigns, &1.name))
+        )
         |> deduplicate_fields()
     end
   end
 
   defp deduplicate_fields(fields) do
-    {fields_by_name, names} =
-      Enum.reduce(fields, {%{}, []}, &merge_field_by_name/2)
+    {fields_by_name, names} = Enum.reduce(fields, {%{}, []}, &merge_field_by_name/2)
 
     Enum.map(names, &Map.fetch!(fields_by_name, &1))
   end
@@ -174,14 +181,15 @@ defmodule Swordfish.Discovery do
   end
 
   defp merge_duplicate_field(existing, duplicate) do
-    %Field{existing |
-      type: duplicate.type,
-      multiple?: duplicate.multiple?,
-      required?: duplicate.required?,
-      description: duplicate.description || existing.description,
-      source: preferred_field_source(existing.source, duplicate.source),
-      struct: preferred_field_struct(existing.struct, duplicate.struct),
-      options: preferred_field_options(existing.options, duplicate.options)
+    %Field{
+      existing
+      | type: duplicate.type,
+        multiple?: duplicate.multiple?,
+        required?: duplicate.required?,
+        description: duplicate.description || existing.description,
+        source: preferred_field_source(existing.source, duplicate.source),
+        struct: preferred_field_struct(existing.struct, duplicate.struct),
+        options: preferred_field_options(existing.options, duplicate.options)
     }
   end
 
@@ -197,11 +205,18 @@ defmodule Swordfish.Discovery do
   defp merge_explicit_assign_fields(template_fields, assign_fields, explicit_assigns) do
     explicit_names = explicit_assign_names(explicit_assigns)
     explicit_fields = Enum.filter(assign_fields, &(&1.name in explicit_names))
+
     template_fields =
       Enum.map(template_fields, fn field ->
         case field.name in explicit_names do
-          true -> apply_explicit_assign_metadata(field, explicit_assign_spec(explicit_assigns, field.name))
-          false -> field
+          true ->
+            apply_explicit_assign_metadata(
+              field,
+              explicit_assign_spec(explicit_assigns, field.name)
+            )
+
+          false ->
+            field
         end
       end)
 
@@ -210,7 +225,9 @@ defmodule Swordfish.Discovery do
     extra_fields =
       explicit_fields
       |> Enum.reject(&MapSet.member?(existing_names, &1.name))
-      |> Enum.map(&apply_explicit_assign_metadata(&1, explicit_assign_spec(explicit_assigns, &1.name)))
+      |> Enum.map(
+        &apply_explicit_assign_metadata(&1, explicit_assign_spec(explicit_assigns, &1.name))
+      )
 
     template_fields ++ extra_fields
   end
@@ -277,13 +294,23 @@ defmodule Swordfish.Discovery do
     discovered_names = MapSet.new(Enum.map(fields, & &1.name))
 
     fields =
-      Enum.map(fields, &merge_discovered_template_field(&1, Map.get(input_fields, &1.name), all_assign_fields, assign_sources))
+      Enum.map(
+        fields,
+        &merge_discovered_template_field(
+          &1,
+          Map.get(input_fields, &1.name),
+          all_assign_fields,
+          assign_sources
+        )
+      )
 
     input_fields
     |> Map.keys()
     |> Enum.reduce(fields, fn name, acc ->
       case MapSet.member?(discovered_names, name) do
-        true -> acc
+        true ->
+          acc
+
         false ->
           template_field = Map.fetch!(input_fields, name)
           [enrich_template_field(template_field, assign_sources) | acc]
@@ -293,30 +320,45 @@ defmodule Swordfish.Discovery do
 
   defp merge_discovered_template_field(field, nil, _all_assign_fields, _assign_sources), do: field
 
-  defp merge_discovered_template_field(field, %Field{type: :entity} = template_field, all_assign_fields, assign_sources) do
-    %Field{field |
-      type: :entity,
-      multiple?: true,
-      source: preserve_discovered_source(field),
-      options: resolve_template_options(template_field.options, all_assign_fields, assign_sources)
+  defp merge_discovered_template_field(
+         field,
+         %Field{type: :entity} = template_field,
+         all_assign_fields,
+         assign_sources
+       ) do
+    %Field{
+      field
+      | type: :entity,
+        multiple?: true,
+        source: preserve_discovered_source(field),
+        options:
+          resolve_template_options(template_field.options, all_assign_fields, assign_sources)
     }
   end
 
-  defp merge_discovered_template_field(field, %Field{type: :enum} = template_field, all_assign_fields, assign_sources) do
-    %Field{field |
-      type: :enum,
-      multiple?: template_field.multiple?,
-      source: template_field.source,
-      options: resolve_template_options(template_field.options, all_assign_fields, assign_sources)
+  defp merge_discovered_template_field(
+         field,
+         %Field{type: :enum} = template_field,
+         all_assign_fields,
+         assign_sources
+       ) do
+    %Field{
+      field
+      | type: :enum,
+        multiple?: template_field.multiple?,
+        source: template_field.source,
+        options:
+          resolve_template_options(template_field.options, all_assign_fields, assign_sources)
     }
   end
 
   defp merge_discovered_template_field(field, template_field, _all_assign_fields, _assign_sources) do
-    %Field{field |
-      type: template_field.type,
-      multiple?: template_field.multiple?,
-      source: template_field.source,
-      options: template_field.options
+    %Field{
+      field
+      | type: template_field.type,
+        multiple?: template_field.multiple?,
+        source: template_field.source,
+        options: template_field.options
     }
   end
 
@@ -479,13 +521,14 @@ defmodule Swordfish.Discovery do
   end
 
   defp heex_input_fields(source) do
-    html_fields = Regex.scan(
-      ~r/<(input|select|textarea)\b([^>]*)>/is,
-      source,
-      capture: :all_but_first
-    )
-    |> Enum.map(&heex_html_field/1)
-    |> Enum.reject(&is_nil/1)
+    html_fields =
+      Regex.scan(
+        ~r/<(input|select|textarea)\b([^>]*)>/is,
+        source,
+        capture: :all_but_first
+      )
+      |> Enum.map(&heex_html_field/1)
+      |> Enum.reject(&is_nil/1)
 
     component_fields =
       Regex.scan(
@@ -544,7 +587,9 @@ defmodule Swordfish.Discovery do
   defp heex_input_type("textarea", _attributes, _multiple?), do: :string
   defp heex_input_type(_tag, _attributes, _multiple?), do: :string
 
-  defp heex_multiple?("select", attributes), do: Regex.match?(~r/\bmultiple\b(?:\s*=)?/i, attributes)
+  defp heex_multiple?("select", attributes),
+    do: Regex.match?(~r/\bmultiple\b(?:\s*=)?/i, attributes)
+
   defp heex_multiple?(_tag, _attributes), do: false
 
   defp put_template_field(%Field{type: :enum, options: options} = field, fields)
@@ -552,7 +597,10 @@ defmodule Swordfish.Discovery do
     Map.get(fields, field.name)
     |> case do
       %Field{type: :enum, options: existing_options} = existing when is_list(existing_options) ->
-        Map.put(fields, field.name, %Field{existing | options: Enum.uniq(existing_options ++ options)})
+        Map.put(fields, field.name, %Field{
+          existing
+          | options: Enum.uniq(existing_options ++ options)
+        })
 
       _ ->
         Map.put_new(fields, field.name, field)
@@ -582,7 +630,10 @@ defmodule Swordfish.Discovery do
   end
 
   defp phoenix_form_field(expression) do
-    Regex.run(~r/\b(select|checkbox|radio_button|text_input|number_input|date_select|datetime_select|date_input|datetime_input)\s+f\s*,\s*:([a-zA-Z0-9_?]+)/, expression)
+    Regex.run(
+      ~r/\b(select|checkbox|radio_button|text_input|number_input|date_select|datetime_select|date_input|datetime_input)\s+f\s*,\s*:([a-zA-Z0-9_?]+)/,
+      expression
+    )
     |> case do
       [_, helper, name] ->
         field_name = String.to_atom(name)
@@ -612,13 +663,15 @@ defmodule Swordfish.Discovery do
   defp phoenix_helper_type("radio_button", _options), do: :enum
   defp phoenix_helper_type(_helper, _options), do: :string
 
-
   defp phoenix_helper_options("select", expression), do: phoenix_options(expression)
   defp phoenix_helper_options("radio_button", expression), do: phoenix_radio_options(expression)
   defp phoenix_helper_options(_helper, _expression), do: nil
 
   defp phoenix_options(expression) do
-    Regex.run(~r/\bselect\s+f\s*,\s*:[a-zA-Z0-9_?]+\s*,\s*(.*?)(?=,\s*(?:value|class|prompt|phx_|id)\s*:|\s*(?:%>)?\s*\z)/, expression)
+    Regex.run(
+      ~r/\bselect\s+f\s*,\s*:[a-zA-Z0-9_?]+\s*,\s*(.*?)(?=,\s*(?:value|class|prompt|phx_|id)\s*:|\s*(?:%>)?\s*\z)/,
+      expression
+    )
     |> case do
       [_, value] -> normalize_template_options(value)
       _ -> nil
@@ -717,7 +770,9 @@ defmodule Swordfish.Discovery do
   defp field_type(value) when is_list(value), do: :enum
   defp field_type(_source), do: :unknown
 
-  defp function_type(function) when function in [:simple_list, :simple_list_for_agents], do: :entity
+  defp function_type(function) when function in [:simple_list, :simple_list_for_agents],
+    do: :entity
+
   defp function_type(_function), do: :fn
 
   defp multiple?({:case, _selector, branches}) when is_list(branches), do: entity_case?(branches)

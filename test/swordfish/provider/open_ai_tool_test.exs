@@ -136,6 +136,7 @@ defmodule Swordfish.Provider.OpenAIToolTest do
              }
            } = Tool.from(tool)
   end
+
   test "makes optional non-boolean properties nullable for strict providers" do
     tool =
       SwordfishTool.new("search", "Search", %{
@@ -166,6 +167,4 @@ defmodule Swordfish.Provider.OpenAIToolTest do
 
     assert Enum.sort(required) == Enum.sort(["origin", "amount_range", "include_related"])
   end
-
 end
-

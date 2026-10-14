@@ -12,7 +12,9 @@ defmodule Swordfish.Provider.OpenAI do
   @default_endpoint "https://api.openai.com/v1/responses"
   @default_model "gpt-5.6-luna"
 
-  @doc "Sends messages and provider-neutral tools to the OpenAI Responses API."
+  @doc """
+  Sends messages and provider-neutral tools to the OpenAI Responses API.
+  """
   @spec chat(list(), list(Swordfish.Tool.t()), keyword()) ::
           {:ok, map()} | {:error, term()}
   def chat(messages, tools, opts \\ []) do
@@ -44,7 +46,8 @@ defmodule Swordfish.Provider.OpenAI do
     |> handle_request_response()
   end
 
-  defp handle_request_response({:ok, status, response_body}) when status >= 200 and status < 300 do
+  defp handle_request_response({:ok, status, response_body})
+       when status >= 200 and status < 300 do
     decode_response(response_body)
   end
 
@@ -62,7 +65,6 @@ defmodule Swordfish.Provider.OpenAI do
       {"content-type", "application/json"}
     ]
   end
-
 
   defp decode_response(response_body) when is_map(response_body) do
     normalize_response(response_body)

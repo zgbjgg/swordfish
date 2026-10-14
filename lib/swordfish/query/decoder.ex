@@ -6,7 +6,9 @@ defmodule Swordfish.Query.Decoder do
   alias Swordfish.Query.Path
   alias Swordfish.Resource
 
-  @doc "Converts decoded tool-call arguments into a Swordfish query."
+  @doc """
+  Converts decoded tool-call arguments into a Swordfish query.
+  """
   @spec from_map(Resource.t(), map()) :: {:ok, Swordfish.Query.t()} | {:error, term()}
   def from_map(%Resource{} = resource, params) when is_map(params) do
     decode_filters(Map.get(params, "filters", []), resource)
@@ -69,17 +71,19 @@ defmodule Swordfish.Query.Decoder do
     allowed_association(resource, part)
     |> case do
       {:ok, association} ->
-        next = Resource.new(
-          association.name,
-          association.module,
-          fields: association.fields,
-          associations: association.associations,
-          max_depth: resource.max_depth
-        )
+        next =
+          Resource.new(
+            association.name,
+            association.module,
+            fields: association.fields,
+            associations: association.associations,
+            max_depth: resource.max_depth
+          )
 
         resolve_allowed_path(next, rest, [association.name | acc])
 
-      :error -> {:error, {:association_not_allowed, resource.name, part}}
+      :error ->
+        {:error, {:association_not_allowed, resource.name, part}}
     end
   end
 
@@ -112,7 +116,9 @@ defmodule Swordfish.Query.Decoder do
   defp collect_conditions(results) do
     Enum.find(results, &match?({:error, _}, &1))
     |> case do
-      {:error, reason} -> {:error, reason}
+      {:error, reason} ->
+        {:error, reason}
+
       nil ->
         conditions = Enum.map(results, &elem(&1, 1))
         {:ok, wrap_conditions(conditions)}

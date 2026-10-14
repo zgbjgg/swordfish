@@ -6,14 +6,14 @@ defmodule Swordfish.LiveViewMacroTest do
   defmodule TestLive do
     use Swordfish.LiveView
 
-    swordfish_resource :tickets, Ticket,
-      fields: [:status, :priority]
+    swordfish_resource(:tickets, Ticket, fields: [:status, :priority])
 
-    swordfish_action :clear_filters,
+    swordfish_action(:clear_filters,
       description: "Clear all filters"
+    )
 
-    swordfish_context :active_tab
-    swordfish_context :current_filters
+    swordfish_context(:active_tab)
+    swordfish_context(:current_filters)
   end
 
   test "compiles resource declarations" do
@@ -44,6 +44,7 @@ defmodule Swordfish.LiveViewMacroTest do
     assert action.name == :apply_filters
     assert action.capability.module == Swordfish.TestSupport.ApplicationInputs
     assert action.capability.name == :search
+
     assert action.capability.assigns == [
              providers: [
                type: :entity,
@@ -53,5 +54,4 @@ defmodule Swordfish.LiveViewMacroTest do
              ]
            ]
   end
-
 end

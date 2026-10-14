@@ -38,7 +38,9 @@ defmodule Swordfish.Query do
     offset: nil
   ]
 
-  @doc "Creates an empty query for a resource."
+  @doc """
+  Creates an empty query for a resource.
+  """
   @spec new(module()) :: t()
   def new(resource) when is_atom(resource) do
     %__MODULE__{resource: resource}

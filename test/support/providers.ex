@@ -1,11 +1,15 @@
 defmodule Swordfish.TestSupport.Providers do
   @moduledoc false
 
-  @doc "Returns all test providers."
+  @doc """
+  Returns all test providers.
+  """
   @spec list() :: [%{id: integer(), name: String.t()}]
   def list, do: [%{id: 1, name: "Northwind"}]
 
-  @doc "Returns provider names for tests."
+  @doc """
+  Returns provider names for tests.
+  """
   @spec names() :: [String.t()]
   def names, do: ["Northwind"]
 
@@ -21,5 +25,4 @@ defmodule Swordfish.TestSupport.Providers do
   @doc false
   @spec ids_only() :: [map()]
   def ids_only, do: [%{id: 1}]
-
 end

@@ -17,7 +17,7 @@ defmodule Swordfish.Discovery.AST do
   end
 
   defp source_with_aliases({{:., _, [module_ast, function]}, _, arguments}, _module, aliases)
-      when is_atom(function) and is_list(arguments) do
+       when is_atom(function) and is_list(arguments) do
     module_name(module_ast, aliases)
     |> case do
       {:ok, module} -> {:ok, [module, function, normalize_arguments(arguments)]}
@@ -31,12 +31,12 @@ defmodule Swordfish.Discovery.AST do
   end
 
   defp source_with_aliases({function, _, arguments}, module, _aliases)
-      when is_atom(function) and is_list(arguments) do
+       when is_atom(function) and is_list(arguments) do
     {:ok, [module, function, normalize_arguments(arguments)]}
   end
 
   defp source_with_aliases({name, _metadata, context}, _module, _aliases)
-      when is_atom(name) and (is_atom(context) or is_nil(context)) do
+       when is_atom(name) and (is_atom(context) or is_nil(context)) do
     {:ok, {:context, [name]}}
   end
 
@@ -65,11 +65,16 @@ defmodule Swordfish.Discovery.AST do
     {:context, [name]}
   end
 
-  defp normalize_expression_node({:__aliases__, _metadata, parts}, _module, aliases) when is_list(parts) do
+  defp normalize_expression_node({:__aliases__, _metadata, parts}, _module, aliases)
+       when is_list(parts) do
     resolve_alias(parts, aliases)
   end
 
-  defp normalize_expression_node({:|>, metadata, [left, {function, call_metadata, arguments}]}, module, aliases)
+  defp normalize_expression_node(
+         {:|>, metadata, [left, {function, call_metadata, arguments}]},
+         module,
+         aliases
+       )
        when is_atom(function) and is_list(arguments) do
     arity = length(arguments) + 1
 
@@ -82,11 +87,16 @@ defmodule Swordfish.Discovery.AST do
         {{:., metadata, [module, function]}, call_metadata, normalized_arguments}
 
       false ->
-        {:|>, metadata, [normalize_expression(left, module, aliases), {function, call_metadata, arguments}]}
+        {:|>, metadata,
+         [normalize_expression(left, module, aliases), {function, call_metadata, arguments}]}
     end
   end
 
-  defp normalize_expression_node({{:., _metadata, [receiver, field]}, _call_metadata, []} = node, _module, _aliases) do
+  defp normalize_expression_node(
+         {{:., _metadata, [receiver, field]}, _call_metadata, []} = node,
+         _module,
+         _aliases
+       ) do
     context_path(receiver, field)
     |> case do
       {:ok, path} -> {:context, path}
@@ -94,7 +104,8 @@ defmodule Swordfish.Discovery.AST do
     end
   end
 
-  defp normalize_expression_node({:., _metadata, [receiver, field]} = node, _module, _aliases) when is_atom(field) do
+  defp normalize_expression_node({:., _metadata, [receiver, field]} = node, _module, _aliases)
+       when is_atom(field) do
     context_path(receiver, field)
     |> case do
       {:ok, path} -> {:context, path}
@@ -179,7 +190,6 @@ defmodule Swordfish.Discovery.AST do
     end
   end
 
-
   defp module_aliases(module) do
     module_source(module)
     |> case do
@@ -243,7 +253,11 @@ defmodule Swordfish.Discovery.AST do
     Map.put(aliases, alias_name, module)
   end
 
-  defp put_alias({:__aliases__, _metadata, parts}, {:__aliases__, _alias_metadata, alias_parts}, aliases)
+  defp put_alias(
+         {:__aliases__, _metadata, parts},
+         {:__aliases__, _alias_metadata, alias_parts},
+         aliases
+       )
        when is_list(parts) and is_list(alias_parts) do
     module = Module.concat(parts)
     alias_name = List.last(alias_parts)
@@ -253,7 +267,8 @@ defmodule Swordfish.Discovery.AST do
   defp put_alias(_module_ast, _alias_ast, aliases), do: aliases
 
   defp put_multi_aliases(
-         {{:., _metadata, [{:__aliases__, _base_metadata, base_parts}, :{}]}, _call_metadata, alias_asts},
+         {{:., _metadata, [{:__aliases__, _base_metadata, base_parts}, :{}]}, _call_metadata,
+          alias_asts},
          aliases
        )
        when is_list(base_parts) and is_list(alias_asts) do

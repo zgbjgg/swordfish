@@ -14,19 +14,20 @@ defmodule Swordfish.RuntimeTest do
 
     @impl true
     def chat(_messages, _tools, _opts) do
-      {:ok, %{
-        "type" => "tool_call",
-        "tool_call" => %{
-          "id" => "call-1",
-          "name" => "query_tickets",
-          "arguments" => %{
-            "filters" => [
-              %{"path" => ["status"], "operator" => "eq", "value" => "open"}
-            ],
-            "limit" => 20
-          }
-        }
-      }}
+      {:ok,
+       %{
+         "type" => "tool_call",
+         "tool_call" => %{
+           "id" => "call-1",
+           "name" => "query_tickets",
+           "arguments" => %{
+             "filters" => [
+               %{"path" => ["status"], "operator" => "eq", "value" => "open"}
+             ],
+             "limit" => 20
+           }
+         }
+       }}
     end
   end
 
@@ -35,14 +36,15 @@ defmodule Swordfish.RuntimeTest do
 
     @impl true
     def chat(_messages, _tools, _opts) do
-      {:ok, %{
-        type: :tool_call,
-        tool_call: %{
-          id: "call-2",
-          name: "clear_filters",
-          arguments: %{}
-        }
-      }}
+      {:ok,
+       %{
+         type: :tool_call,
+         tool_call: %{
+           id: "call-2",
+           name: "clear_filters",
+           arguments: %{}
+         }
+       }}
     end
   end
 

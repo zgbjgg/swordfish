@@ -43,11 +43,13 @@ defmodule Swordfish.Query.EctoTest do
     join = List.first(ecto_query.joins)
 
     assert length(ecto_query.joins) == 1
+
     assert %JoinExpr{
-         assoc: {0, :customer},
-         as: :customer,
-         qual: :inner
-       } = join
+             assoc: {0, :customer},
+             as: :customer,
+             qual: :inner
+           } = join
+
     assert ecto_query.aliases[:customer] == 1
   end
 

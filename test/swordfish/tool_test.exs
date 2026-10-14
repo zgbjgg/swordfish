@@ -63,7 +63,11 @@ defmodule Swordfish.ToolTest do
       })
 
     assert {:ok, resolved_tool} = Tool.resolve(tool)
-    assert resolved_tool.input_schema.properties.providers == %{type: :string, enum: ["Northwind"]}
+
+    assert resolved_tool.input_schema.properties.providers == %{
+             type: :string,
+             enum: ["Northwind"]
+           }
   end
 
   test "resolves an enum source using runtime context" do
@@ -156,7 +160,7 @@ defmodule Swordfish.ToolTest do
       Tool.new("search", "", %{
         type: :object,
         properties: %{
-          providers: %{type: :string, enum_source: [Map, :get, [%{value: :one}, :value] ]}
+          providers: %{type: :string, enum_source: [Map, :get, [%{value: :one}, :value]]}
         },
         required: []
       })
@@ -206,9 +210,7 @@ defmodule Swordfish.ToolTest do
 
     assert resolved_tool.input_schema.properties.providers.entities == [%{id: 1}]
   end
-
 end
-
 
 defmodule Swordfish.ToolEntityTest do
   use ExUnit.Case

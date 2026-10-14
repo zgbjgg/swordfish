@@ -4,7 +4,9 @@ defmodule Swordfish.Query.Schema do
   alias Swordfish.Resource
   alias Swordfish.Query.Operator
 
-  @doc "Builds a provider-neutral tool definition for a resource query."
+  @doc """
+  Builds a provider-neutral tool definition for a resource query.
+  """
   @spec tool(Resource.t(), keyword()) :: map()
   def tool(%Resource{} = resource, opts \\ []) do
     %{

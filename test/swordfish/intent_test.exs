@@ -13,7 +13,12 @@ defmodule Swordfish.IntentTest do
         [
           %Field{name: :priority, type: :boolean},
           %Field{name: :providers, type: :integer, multiple?: true},
-          %Field{name: :status_options, type: :enum, multiple?: true, source: ["today", "tomorrow"]}
+          %Field{
+            name: :status_options,
+            type: :enum,
+            multiple?: true,
+            source: ["today", "tomorrow"]
+          }
         ]
       )
 
@@ -49,12 +54,15 @@ defmodule Swordfish.IntentTest do
   test "rejects an unknown argument" do
     intent = Intent.new("call_1", "search_filters", %{provider: 12})
 
-    assert {:error, {:unknown_argument, [:arguments, :provider]}} = Intent.validate(intent, [tool()])
+    assert {:error, {:unknown_argument, [:arguments, :provider]}} =
+             Intent.validate(intent, [tool()])
   end
 
   test "accepts atom and string argument keys" do
     atom_intent = Intent.new("call_1", "search_filters", %{priority: true, providers: [12]})
-    string_intent = Intent.new("call_2", "search_filters", %{"priority" => true, "providers" => [12]})
+
+    string_intent =
+      Intent.new("call_2", "search_filters", %{"priority" => true, "providers" => [12]})
 
     assert {:ok, ^atom_intent} = Intent.validate(atom_intent, [tool()])
     assert {:ok, ^string_intent} = Intent.validate(string_intent, [tool()])
@@ -81,7 +89,8 @@ defmodule Swordfish.IntentTest do
     {:ok, tool} = Tool.from_contract(contract)
     intent = Intent.new("call_1", "search_filters", %{})
 
-    assert {:error, {:missing_required, [:arguments, :priority]}} = Intent.validate(intent, [tool])
+    assert {:error, {:missing_required, [:arguments, :priority]}} =
+             Intent.validate(intent, [tool])
   end
 
   test "normalizes provider enum labels into their application values" do
@@ -115,6 +124,7 @@ defmodule Swordfish.IntentTest do
     assert {:ok, normalized_intent} = Intent.validate(intent, [tool])
     assert normalized_intent.arguments == %{"category" => :legal}
   end
+
   test "accepts nil for optional non-boolean arguments" do
     tool =
       Tool.new("search", "", %{
@@ -133,6 +143,7 @@ defmodule Swordfish.IntentTest do
       })
 
     assert {:ok, normalized_intent} = Intent.validate(intent, [tool])
+
     assert normalized_intent.arguments == %{
              "origin" => nil,
              "include_related" => false
@@ -152,7 +163,6 @@ defmodule Swordfish.IntentTest do
     assert {:error, {:invalid_type, [:arguments, :origin], :non_nil, nil}} =
              Intent.validate(intent, [tool])
   end
-
 
   test "normalizes nil multiple enum arguments to an empty list" do
     tool =
@@ -208,6 +218,4 @@ defmodule Swordfish.IntentTest do
     assert {:ok, validated} = Intent.validate(intent, [tool])
     assert validated.arguments == %{"origin" => nil}
   end
-
 end
-

@@ -1,7 +1,7 @@
 defmodule Swordfish.TestSupport.CapabilityLive do
   use Swordfish.LiveView
 
-  swordfish_action :apply_filters,
+  swordfish_action(:apply_filters,
     description: "Apply filters",
     discovery: [
       module: Swordfish.TestSupport.ApplicationInputs,
@@ -15,4 +15,5 @@ defmodule Swordfish.TestSupport.CapabilityLive do
         ]
       ]
     ]
+  )
 end

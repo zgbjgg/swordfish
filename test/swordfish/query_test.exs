@@ -9,8 +9,7 @@ defmodule Swordfish.QueryTest do
   test "builds a simple query" do
     query =
       Q.query(Ticket,
-        where:
-          Q.condition(:status, :eq, :open),
+        where: Q.condition(:status, :eq, :open),
         limit: 20
       )
 

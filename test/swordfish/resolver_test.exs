@@ -40,7 +40,6 @@ defmodule Swordfish.ResolverTest do
   end
 end
 
-
 defmodule SwordfishResolverFunctionTest do
   use ExUnit.Case
 

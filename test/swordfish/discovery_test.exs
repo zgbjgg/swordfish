@@ -39,9 +39,7 @@ defmodule SwordfishDiscoveryTest do
              %{id: "mobile_app", name: "Mobile App"}
            ]
   end
-
 end
-
 
 defmodule SwordfishDiscoveryDateInputTest do
   use ExUnit.Case
@@ -58,7 +56,6 @@ defmodule SwordfishDiscoveryDateInputTest do
     assert start_at.type == :datetime
   end
 end
-
 
 defmodule SwordfishDiscoverySourceTest do
   use ExUnit.Case
@@ -97,7 +94,6 @@ defmodule SwordfishDiscoverySourceTest do
   end
 end
 
-
 defmodule SwordfishDiscoveryResolverTest do
   use ExUnit.Case
 
@@ -108,7 +104,6 @@ defmodule SwordfishDiscoveryResolverTest do
              Resolver.resolve([Swordfish.TestSupport.Providers, :list, []])
   end
 end
-
 
 defmodule SwordfishDiscoveryContractTest do
   use ExUnit.Case
@@ -143,7 +138,6 @@ defmodule SwordfishDiscoveryContractTest do
   end
 end
 
-
 defmodule SwordfishDiscoveryEntityTest do
   use ExUnit.Case
 
@@ -151,6 +145,7 @@ defmodule SwordfishDiscoveryEntityTest do
 
   def get_entity_list(nil, _), do: Swordfish.TestSupport.Providers.simple_list()
   def get_entity_list(false, _), do: Swordfish.TestSupport.Providers.simple_list()
+
   def get_entity_list(true, user_id),
     do: Swordfish.TestSupport.Providers.simple_list_for_agents(user_id)
 
@@ -166,7 +161,14 @@ defmodule SwordfishDiscoveryEntityTest do
     assert {:ok, [field]} =
              Discovery.discover(
                __MODULE__,
-               assigns: [items: [type: :entity, value_type: :integer, multiple?: true, struct: [:id, :name]]]
+               assigns: [
+                 items: [
+                   type: :entity,
+                   value_type: :integer,
+                   multiple?: true,
+                   struct: [:id, :name]
+                 ]
+               ]
              )
 
     assert field.type == :entity
@@ -186,7 +188,14 @@ defmodule SwordfishDiscoveryEntityTest do
              Discovery.discover_contract(
                __MODULE__,
                :search_filters,
-               assigns: [items: [type: :entity, value_type: :integer, multiple?: true, struct: [:id, :name]]]
+               assigns: [
+                 items: [
+                   type: :entity,
+                   value_type: :integer,
+                   multiple?: true,
+                   struct: [:id, :name]
+                 ]
+               ]
              )
 
     field = Enum.find(contract.fields, &(&1.name == :items))
@@ -202,9 +211,7 @@ defmodule SwordfishDiscoveryEntityTest do
     assert field.struct == [:id, :name]
     assert field.multiple? == true
   end
-
 end
-
 
 defmodule SwordfishDiscoveryTemplateTest do
   use ExUnit.Case
@@ -239,7 +246,6 @@ defmodule SwordfishDiscoveryTemplateTest do
     refute :selected_records in names
   end
 end
-
 
 defmodule SwordfishDiscoveryLeexTemplateTest do
   use ExUnit.Case
@@ -281,7 +287,14 @@ defmodule SwordfishDiscoveryLeexTemplateTest do
     assert {:ok, fields} =
              Discovery.discover(
                Swordfish.TestSupport.TemplateLeexForm,
-               assigns: [providers: [type: :entity, value_type: :integer, multiple?: true, struct: [:id, :name]]]
+               assigns: [
+                 providers: [
+                   type: :entity,
+                   value_type: :integer,
+                   multiple?: true,
+                   struct: [:id, :name]
+                 ]
+               ]
              )
 
     providers = Enum.find(fields, &(&1.name == :providers))
@@ -311,7 +324,14 @@ defmodule SwordfishDiscoveryLeexTemplateTest do
              Discovery.discover_contract(
                Swordfish.TestSupport.TemplateLeexForm,
                :search_contract,
-               assigns: [providers: [type: :entity, value_type: :integer, multiple?: true, struct: [:id, :description]]]
+               assigns: [
+                 providers: [
+                   type: :entity,
+                   value_type: :integer,
+                   multiple?: true,
+                   struct: [:id, :description]
+                 ]
+               ]
              )
 
     providers = Enum.find(contract.fields, &(&1.name == :providers))
@@ -352,6 +372,7 @@ defmodule SwordfishDiscoveryLeexTemplateTest do
     field = Enum.find(fields, &(&1.name == :dynamic_choice))
 
     assert field.type == :enum
+
     assert field.options ==
              {:resolver, [Swordfish.TestSupport.Providers, :list, []]}
   end
@@ -378,7 +399,8 @@ defmodule SwordfishDiscoveryLeexTemplateTest do
     assert {:resolver, {:function, resolver}} = field.options
     assert is_function(resolver, 0)
     expression = resolver.()
-    assert Macro.to_string(expression) =~ "Swordfish.TestSupport.TemplateLeexForm.render_options([:one, :two])"
-  end
 
+    assert Macro.to_string(expression) =~
+             "Swordfish.TestSupport.TemplateLeexForm.render_options([:one, :two])"
+  end
 end

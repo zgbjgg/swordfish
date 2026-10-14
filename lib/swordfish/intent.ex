@@ -12,7 +12,14 @@ defmodule Swordfish.Intent do
     {"format", :format}
   ]
 
-  @schema_types %{"object" => :object, "array" => :array, "string" => :string, "integer" => :integer, "boolean" => :boolean, "number" => :number}
+  @schema_types %{
+    "object" => :object,
+    "array" => :array,
+    "string" => :string,
+    "integer" => :integer,
+    "boolean" => :boolean,
+    "number" => :number
+  }
   @schema_formats %{"date" => :date, "date-time" => :date_time}
   alias Swordfish.Tool
 
@@ -24,13 +31,17 @@ defmodule Swordfish.Intent do
 
   defstruct [:id, :name, arguments: %{}]
 
-  @doc "Builds an intent from a provider-neutral tool call."
+  @doc """
+  Builds an intent from a provider-neutral tool call.
+  """
   @spec new(binary() | nil, binary(), map()) :: t()
   def new(id, name, arguments) when is_binary(name) and is_map(arguments) do
     %__MODULE__{id: id, name: name, arguments: arguments}
   end
 
-  @doc "Builds an intent from a normalized provider tool call."
+  @doc """
+  Builds an intent from a normalized provider tool call.
+  """
   @spec from_tool_call(map()) :: {:ok, t()} | {:error, term()}
   def from_tool_call(%{id: id, name: name, arguments: arguments})
       when (is_binary(id) or is_nil(id)) and is_binary(name) and is_map(arguments) do
@@ -39,7 +50,9 @@ defmodule Swordfish.Intent do
 
   def from_tool_call(_tool_call), do: {:error, :invalid_tool_call}
 
-  @doc "Validates an intent against an allowed list of provider-neutral tools."
+  @doc """
+  Validates an intent against an allowed list of provider-neutral tools.
+  """
   @spec validate(t(), [Tool.t()]) :: {:ok, t()} | {:error, term()}
   def validate(%__MODULE__{} = intent, tools) when is_list(tools) do
     find_tool(tools, intent.name)
@@ -66,7 +79,8 @@ defmodule Swordfish.Intent do
     end
   end
 
-  defp normalize_arguments(arguments, %{type: :object, properties: properties}) when is_map(arguments) do
+  defp normalize_arguments(arguments, %{type: :object, properties: properties})
+       when is_map(arguments) do
     Map.new(arguments, &normalize_argument(&1, properties))
   end
 
@@ -83,10 +97,12 @@ defmodule Swordfish.Intent do
     end
   end
 
-  defp normalize_argument_value(nil, %{type: :array, entities: entities}) when is_list(entities), do: []
-
-  defp normalize_argument_value(nil, %{type: :array, items: %{enum: values}}) when is_list(values),
+  defp normalize_argument_value(nil, %{type: :array, entities: entities}) when is_list(entities),
     do: []
+
+  defp normalize_argument_value(nil, %{type: :array, items: %{enum: values}})
+       when is_list(values),
+       do: []
 
   defp normalize_argument_value(value, %{type: :array, items: schema}) when is_list(value) do
     Enum.map(value, &normalize_argument_value(&1, schema))
@@ -99,7 +115,7 @@ defmodule Swordfish.Intent do
   defp normalize_argument_value(value, _schema), do: value
 
   defp normalize_enum_argument(value, values) do
-    Enum.find(values, &enum_wire_value(&1) == value)
+    Enum.find(values, &(enum_wire_value(&1) == value))
     |> case do
       {_label, enum_value} -> enum_value
       nil -> value
@@ -164,13 +180,15 @@ defmodule Swordfish.Intent do
     end
   end
 
-  defp validate_value(value, %{type: :object}, path), do: {:error, {:invalid_type, path, :object, value}}
+  defp validate_value(value, %{type: :object}, path),
+    do: {:error, {:invalid_type, path, :object, value}}
 
   defp validate_value(value, %{type: :array, items: item_schema}, path) when is_list(value) do
     validate_array_items(value, item_schema, path, 0)
   end
 
-  defp validate_value(value, %{type: :array}, path), do: {:error, {:invalid_type, path, :array, value}}
+  defp validate_value(value, %{type: :array}, path),
+    do: {:error, {:invalid_type, path, :array, value}}
 
   defp validate_value(value, %{type: :string, format: :date} = schema, path) do
     validate_scalar(value, schema, :string, path)
@@ -196,7 +214,8 @@ defmodule Swordfish.Intent do
     validate_scalar(value, schema, :number, path)
   end
 
-  defp validate_value(value, %{type: type}, path), do: {:error, {:invalid_type, path, type, value}}
+  defp validate_value(value, %{type: type}, path),
+    do: {:error, {:invalid_type, path, type, value}}
 
   defp validate_required(_value, [], _path), do: :ok
 
@@ -221,28 +240,63 @@ defmodule Swordfish.Intent do
     |> validate_known_property(name, value, rest, properties, schema, path)
   end
 
-  defp validate_known_property({:ok, property_name, property_schema}, _name, value, rest, properties, schema, path) do
+  defp validate_known_property(
+         {:ok, property_name, property_schema},
+         _name,
+         value,
+         rest,
+         properties,
+         schema,
+         path
+       ) do
     value
     |> fetch_argument(property_name)
-    |> validate_known_argument(property_schema, property_name, value, rest, properties, schema, path)
+    |> validate_known_argument(
+      property_schema,
+      property_name,
+      value,
+      rest,
+      properties,
+      schema,
+      path
+    )
   end
 
-  defp validate_known_property(:error, name, _value, _rest, _properties, _schema, path), do:
-    {:error, {:unknown_argument, path ++ [name]}}
+  defp validate_known_property(:error, name, _value, _rest, _properties, _schema, path),
+    do: {:error, {:unknown_argument, path ++ [name]}}
 
-  defp validate_known_argument({:ok, argument}, property_schema, property_name, value, rest, properties, schema, path) do
+  defp validate_known_argument(
+         {:ok, argument},
+         property_schema,
+         property_name,
+         value,
+         rest,
+         properties,
+         schema,
+         path
+       ) do
     argument
     |> validate_property_argument(property_schema, property_name, schema, path)
     |> continue_known_property(value, rest, properties, schema, path)
   end
 
-  defp validate_known_argument(:error, _property_schema, _property_name, value, rest, properties, schema, path), do:
-    validate_known_properties(value, rest, properties, schema, path)
+  defp validate_known_argument(
+         :error,
+         _property_schema,
+         _property_name,
+         value,
+         rest,
+         properties,
+         schema,
+         path
+       ),
+       do: validate_known_properties(value, rest, properties, schema, path)
 
-  defp continue_known_property(:ok, value, rest, properties, schema, path), do:
-    validate_known_properties(value, rest, properties, schema, path)
-  defp continue_known_property({:error, reason}, _value, _rest, _properties, _schema, _path), do: {:error, reason}
+  defp continue_known_property(:ok, value, rest, properties, schema, path),
+    do: validate_known_properties(value, rest, properties, schema, path)
 
+  defp continue_known_property({:error, reason}, _value, _rest, _properties, _schema, _path),
+    do: {:error, reason}
 
   defp validate_property_argument(nil, _property_schema, property_name, schema, path) do
     case property_required?(schema, property_name) do
@@ -259,11 +313,11 @@ defmodule Swordfish.Intent do
     Enum.any?(Map.get(schema, :required, []), &same_property_name?(&1, property_name))
   end
 
-  defp same_property_name?(left, right) when is_atom(left) and is_binary(right), do:
-    Atom.to_string(left) == right
+  defp same_property_name?(left, right) when is_atom(left) and is_binary(right),
+    do: Atom.to_string(left) == right
 
-  defp same_property_name?(left, right) when is_binary(left) and is_atom(right), do:
-    left == Atom.to_string(right)
+  defp same_property_name?(left, right) when is_binary(left) and is_atom(right),
+    do: left == Atom.to_string(right)
 
   defp same_property_name?(left, right), do: left == right
 

@@ -8,7 +8,9 @@ defmodule Swordfish.Query.Validator do
   alias Swordfish.Query.Value
   alias Swordfish.Resource
 
-  @doc "Validates a query against a Swordfish resource."
+  @doc """
+  Validates a query against a Swordfish resource.
+  """
   @spec validate(Query.t(), Resource.t()) :: {:ok, Query.t()} | {:error, term()}
   def validate(%Query{} = query, %Resource{} = resource) do
     query
@@ -131,7 +133,8 @@ defmodule Swordfish.Query.Validator do
   defp validate_offset(_), do: {:error, :invalid_offset}
 
   defp validate_value(operator, _value, _type)
-       when operator in [:is_nil, :is_not_nil], do: :ok
+       when operator in [:is_nil, :is_not_nil],
+       do: :ok
 
   defp validate_value(operator, value, _type)
        when operator in [:in, :not_in] do

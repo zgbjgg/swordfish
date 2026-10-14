@@ -29,7 +29,9 @@ defmodule Swordfish.Runtime do
     :policy
   ]
 
-  @doc "Creates a Swordfish runtime from a LiveView runtime, provider and policy."
+  @doc """
+  Creates a Swordfish runtime from a LiveView runtime, provider and policy.
+  """
   @spec new(LiveView.t(), module(), Policy.t()) :: t()
   def new(%LiveView{} = live_view, provider, %Policy{} = policy) when is_atom(provider) do
     %__MODULE__{
@@ -39,7 +41,9 @@ defmodule Swordfish.Runtime do
     }
   end
 
-  @doc "Sends a user message through the configured provider and handles its first response."
+  @doc """
+  Sends a user message through the configured provider and handles its first response.
+  """
   @spec run(t(), String.t(), keyword()) :: {:ok, Result.t()} | {:error, term()}
   def run(%__MODULE__{} = runtime, message, opts \\ []) when is_binary(message) do
     runtime
@@ -53,8 +57,11 @@ defmodule Swordfish.Runtime do
     system_message = Keyword.get(opts, :system_message, context_message(runtime.live_view))
 
     case system_message do
-      nil -> [%{"role" => "user", "content" => message}]
-      value -> [%{"role" => "system", "content" => value}, %{"role" => "user", "content" => message}]
+      nil ->
+        [%{"role" => "user", "content" => message}]
+
+      value ->
+        [%{"role" => "system", "content" => value}, %{"role" => "user", "content" => message}]
     end
   end
 
@@ -93,21 +100,29 @@ defmodule Swordfish.Runtime do
   end
 
   defp action_tool(%Action{capability: nil} = action, _context) do
-    {:ok, Tool.new(Atom.to_string(action.name), action.description, action.input_schema, action.handler)}
+    {:ok,
+     Tool.new(
+       Atom.to_string(action.name),
+       action.description,
+       action.input_schema,
+       action.handler
+     )}
   end
 
   defp action_tool(%Action{capability: %Capability{} = capability} = action, context) do
     Capability.resolve(capability, context)
     |> case do
       {:ok, resolved_tool} ->
-        {:ok, Tool.new(
-          Atom.to_string(action.name),
-          action.description,
-          resolved_tool.input_schema,
-          action.handler
-        )}
+        {:ok,
+         Tool.new(
+           Atom.to_string(action.name),
+           action.description,
+           resolved_tool.input_schema,
+           action.handler
+         )}
 
-      {:error, reason} -> {:error, reason}
+      {:error, reason} ->
+        {:error, reason}
     end
   end
 
@@ -193,7 +208,7 @@ defmodule Swordfish.Runtime do
   end
 
   defp find_resource_by_name(resources, name) do
-    Enum.find(resources, &Atom.to_string(elem(&1, 0)) == name)
+    Enum.find(resources, &(Atom.to_string(elem(&1, 0)) == name))
     |> case do
       nil -> :error
       {_key, resource} -> {:ok, resource}
@@ -224,7 +239,7 @@ defmodule Swordfish.Runtime do
   end
 
   defp find_action(%LiveView{actions: actions}, name) do
-    Enum.find(actions, &Atom.to_string(elem(&1, 0)) == name)
+    Enum.find(actions, &(Atom.to_string(elem(&1, 0)) == name))
     |> case do
       nil -> nil
       {_key, action} -> action
@@ -245,8 +260,8 @@ defmodule Swordfish.Runtime do
     end
   end
 
-  defp find_action_for_dispatch(:error, name, _live_view, _arguments, _tool_call_id), do:
-    {:ok, Result.error({:unknown_tool, name})}
+  defp find_action_for_dispatch(:error, name, _live_view, _arguments, _tool_call_id),
+    do: {:ok, Result.error({:unknown_tool, name})}
 
   defp action_name(name) when is_binary(name), do: {:ok, name}
   defp action_name(_name), do: :error
@@ -275,15 +290,18 @@ defmodule Swordfish.Runtime do
       {:ok, validated_intent} ->
         resolved_action = %{action | input_schema: tool.input_schema}
         {:ok, Result.action(resolved_action, validated_intent.arguments, tool_call_id)}
-      {:error, reason} -> {:ok, Result.error({:action, reason})}
+
+      {:error, reason} ->
+        {:ok, Result.error({:action, reason})}
     end
   end
 
-  defp validate_resolved_action({:error, reason}, action, _arguments, _tool_call_id), do:
-    {:ok, Result.error({:action_tool, action.name, reason})}
+  defp validate_resolved_action({:error, reason}, action, _arguments, _tool_call_id),
+    do: {:ok, Result.error({:action_tool, action.name, reason})}
 
-  defp context_message(%LiveView{context: %Swordfish.Context{values: values}}) when map_size(values) == 0,
-    do: nil
+  defp context_message(%LiveView{context: %Swordfish.Context{values: values}})
+       when map_size(values) == 0,
+       do: nil
 
   defp context_message(%LiveView{context: %Swordfish.Context{values: values}}) do
     "Application-approved context: #{inspect(values)}"

@@ -3,7 +3,9 @@ defmodule Swordfish.Query.Path do
 
   alias Swordfish.Resource
 
-  @doc "Resolves a semantic path against a resource allowlist."
+  @doc """
+  Resolves a semantic path against a resource allowlist.
+  """
   @spec resolve(Resource.t(), [atom()]) :: {:ok, map()} | {:error, term()}
   def resolve(%Resource{} = resource, path) when is_list(path) do
     do_resolve(resource, path, [], 0)

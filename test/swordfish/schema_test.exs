@@ -7,10 +7,19 @@ defmodule Swordfish.SchemaTest do
 
   test "builds an object schema from a contract" do
     contract =
-      Contract.new(:search_filters, [
-        %Field{name: :priority, type: :boolean},
-        %Field{name: :status_options, type: :enum, multiple?: true, source: ["today", "tomorrow"]}
-      ], description: "Search filters")
+      Contract.new(
+        :search_filters,
+        [
+          %Field{name: :priority, type: :boolean},
+          %Field{
+            name: :status_options,
+            type: :enum,
+            multiple?: true,
+            source: ["today", "tomorrow"]
+          }
+        ],
+        description: "Search filters"
+      )
 
     assert {:ok, schema} = Schema.from_contract(contract)
 
@@ -111,7 +120,14 @@ defmodule Swordfish.SchemaTest do
     field = %Field{name: :providers, type: :entity, value_type: :integer, multiple?: true}
 
     assert {:ok, schema} = Schema.field(field)
-    assert schema == %{type: :array, items: %{type: :integer}, entity_struct: [:id, :name], default: [], description: nil}
+
+    assert schema == %{
+             type: :array,
+             items: %{type: :integer},
+             entity_struct: [:id, :name],
+             default: [],
+             description: nil
+           }
   end
 
   test "builds a string schema for a single entity" do
@@ -133,9 +149,7 @@ defmodule Swordfish.SchemaTest do
     assert {:ok, schema} = Schema.field(field)
     assert schema == %{type: :string, format: :date_time, description: nil}
   end
-
 end
-
 
 defmodule Swordfish.SchemaEntitySourceTest do
   use ExUnit.Case
@@ -159,7 +173,14 @@ defmodule Swordfish.SchemaEntitySourceTest do
 
   test "preserves an entity resolver source for multiple entities" do
     source = [Swordfish.TestSupport.Providers, :list, []]
-    field = %Field{name: :providers, type: :entity, value_type: :integer, multiple?: true, source: source}
+
+    field = %Field{
+      name: :providers,
+      type: :entity,
+      value_type: :integer,
+      multiple?: true,
+      source: source
+    }
 
     assert {:ok, schema} = Schema.field(field)
 

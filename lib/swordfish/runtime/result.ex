@@ -25,19 +25,25 @@ defmodule Swordfish.Runtime.Result do
     :error
   ]
 
-  @doc "Creates a final assistant response result."
+  @doc """
+  Creates a final assistant response result.
+  """
   @spec responded(String.t()) :: t()
   def responded(message) when is_binary(message) do
     %__MODULE__{status: :responded, message: message}
   end
 
-  @doc "Creates a query result."
+  @doc """
+  Creates a query result.
+  """
   @spec query(Swordfish.Query.t(), Ecto.Query.t(), String.t() | nil) :: t()
   def query(query, ecto_query, tool_call_id) do
     %__MODULE__{status: :query, query: query, ecto_query: ecto_query, tool_call_id: tool_call_id}
   end
 
-  @doc "Creates an action intent result."
+  @doc """
+  Creates an action intent result.
+  """
   @spec action(Swordfish.Action.t(), map(), String.t() | nil) :: t()
   def action(action, arguments, tool_call_id) do
     %__MODULE__{
@@ -48,7 +54,9 @@ defmodule Swordfish.Runtime.Result do
     }
   end
 
-  @doc "Creates an error result."
+  @doc """
+  Creates an error result.
+  """
   @spec error(term()) :: t()
   def error(reason), do: %__MODULE__{status: :error, error: reason}
 end

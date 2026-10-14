@@ -15,7 +15,9 @@ defmodule Swordfish.Tool do
 
   defstruct [:name, :description, :input_schema, :handler]
 
-  @doc "Builds a provider-neutral tool from a contract."
+  @doc """
+  Builds a provider-neutral tool from a contract.
+  """
   @spec from_contract(Contract.t()) :: {:ok, t()} | {:error, term()}
   def from_contract(%Contract{} = contract) do
     Schema.from_contract(contract)
@@ -33,7 +35,9 @@ defmodule Swordfish.Tool do
     end
   end
 
-  @doc "Resolves dynamic enum sources using approved runtime context."
+  @doc """
+  Resolves dynamic enum sources using approved runtime context.
+  """
   @spec resolve(t(), Context.t()) :: {:ok, t()} | {:error, term()}
   @spec resolve(t()) :: {:ok, t()} | {:error, term()}
   def resolve(%__MODULE__{} = tool, context \\ Context.new()) do
@@ -44,7 +48,9 @@ defmodule Swordfish.Tool do
     end
   end
 
-  @doc "Creates a provider-neutral Swordfish tool."
+  @doc """
+  Creates a provider-neutral Swordfish tool.
+  """
   @spec new(String.t(), String.t(), map(), function() | nil) :: t()
   def new(name, description, input_schema, handler \\ nil) do
     %__MODULE__{
@@ -54,6 +60,7 @@ defmodule Swordfish.Tool do
       handler: handler
     }
   end
+
   defp resolve_schema(%{properties: properties} = schema, context) when is_map(properties) do
     resolve_properties(properties, context, %{})
     |> case do
@@ -77,6 +84,7 @@ defmodule Swordfish.Tool do
     |> case do
       {:ok, resolved_schema} ->
         resolve_properties(Map.new(remaining), context, Map.put(resolved, name, resolved_schema))
+
       {:error, reason} ->
         {:error, {:invalid_property, name, reason}}
     end
@@ -95,8 +103,10 @@ defmodule Swordfish.Tool do
     |> case do
       {:ok, values} when is_list(values) ->
         {:ok, Map.delete(Map.put(schema, :enum, values), :enum_source)}
+
       {:ok, value} ->
         {:error, {:invalid_enum_source_result, value}}
+
       {:error, reason} ->
         {:error, reason}
     end
@@ -109,6 +119,7 @@ defmodule Swordfish.Tool do
       {:error, reason} -> {:error, reason}
     end
   end
+
   defp resolve_field_schema(schema, _context), do: {:ok, schema}
 
   defp resolve_entities(entities, struct) do
@@ -132,11 +143,15 @@ defmodule Swordfish.Tool do
     |> case do
       {:ok, resolved_entities} ->
         {:ok, schema |> Map.put(:entities, resolved_entities) |> Map.delete(:entity_source)}
-      {:error, reason} -> {:error, reason}
+
+      {:error, reason} ->
+        {:error, reason}
     end
   end
 
-  defp resolve_entity_source_result({:ok, value}, _schema, _struct), do: {:error, {:invalid_entity_source_result, value}}
+  defp resolve_entity_source_result({:ok, value}, _schema, _struct),
+    do: {:error, {:invalid_entity_source_result, value}}
+
   defp resolve_entity_source_result({:error, reason}, _schema, _struct), do: {:error, reason}
 
   defp validate_entity_id(entity) do
@@ -151,7 +166,8 @@ defmodule Swordfish.Tool do
     end
   end
 
-  defp continue_entity_resolution({:error, reason}, _entity, _resolved, _struct), do: {:halt, {:error, reason}}
+  defp continue_entity_resolution({:error, reason}, _entity, _resolved, _struct),
+    do: {:halt, {:error, reason}}
 
   defp missing_entity_fields(entity, struct) do
     Enum.reject(struct, &Map.has_key?(entity, &1))

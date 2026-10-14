@@ -7,7 +7,9 @@ defmodule Swordfish.LiveView do
   expose the Phoenix socket to the LLM.
   """
 
-  @doc "Imports the Swordfish LiveView DSL and registers its compile-time declarations."
+  @doc """
+  Imports the Swordfish LiveView DSL and registers its compile-time declarations.
+  """
   defmacro __using__(_opts) do
     quote do
       import Swordfish.LiveView,
@@ -27,7 +29,9 @@ defmodule Swordfish.LiveView do
     end
   end
 
-  @doc "Registers an Ecto resource as visible to Swordfish."
+  @doc """
+  Registers an Ecto resource as visible to Swordfish.
+  """
   defmacro swordfish_resource(name, schema, opts \\ []) do
     quote do
       @swordfish_resources {
@@ -38,7 +42,9 @@ defmodule Swordfish.LiveView do
     end
   end
 
-  @doc "Registers an AI action as visible to Swordfish."
+  @doc """
+  Registers an AI action as visible to Swordfish.
+  """
   defmacro swordfish_action(name, opts \\ []) do
     quote do
       @swordfish_actions {
@@ -48,7 +54,9 @@ defmodule Swordfish.LiveView do
     end
   end
 
-  @doc "Registers a LiveView context field as visible to Swordfish."
+  @doc """
+  Registers a LiveView context field as visible to Swordfish.
+  """
   defmacro swordfish_context(name, opts \\ []) do
     quote do
       @swordfish_context {
@@ -58,7 +66,9 @@ defmodule Swordfish.LiveView do
     end
   end
 
-  @doc "Generates the compiled Swordfish declarations for the LiveView module."
+  @doc """
+  Generates the compiled Swordfish declarations for the LiveView module.
+  """
   defmacro __before_compile__(env) do
     resources = Module.get_attribute(env.module, :swordfish_resources) |> Enum.reverse()
     actions = Module.get_attribute(env.module, :swordfish_actions) |> Enum.reverse()
@@ -66,20 +76,26 @@ defmodule Swordfish.LiveView do
     context = Module.get_attribute(env.module, :swordfish_context) |> Enum.reverse()
 
     quote do
-      @doc "Returns the Swordfish resource declarations for this LiveView."
+      @doc """
+      Returns the Swordfish resource declarations for this LiveView.
+      """
       @spec swordfish_resources() :: [Swordfish.Resource.t()]
       def swordfish_resources do
         unquote(Macro.escape(resources))
         |> Enum.map(&build_resource/1)
       end
 
-      @doc "Returns the Swordfish action declarations for this LiveView."
+      @doc """
+      Returns the Swordfish action declarations for this LiveView.
+      """
       @spec swordfish_actions() :: [Swordfish.Action.t()]
       def swordfish_actions do
         unquote(Macro.escape(actions))
       end
 
-      @doc "Returns the Swordfish context declarations for this LiveView."
+      @doc """
+      Returns the Swordfish context declarations for this LiveView.
+      """
       @spec swordfish_context_fields() :: [atom()]
       def swordfish_context_fields do
         unquote(Macro.escape(context))
@@ -100,40 +116,50 @@ defmodule Swordfish.LiveView do
           context: Swordfish.Context.t()
         }
 
-  defstruct [
-    resources: %{},
-    actions: %{},
-    context: %Swordfish.Context{}
-  ]
+  defstruct resources: %{},
+            actions: %{},
+            context: %Swordfish.Context{}
 
-  @doc "Creates an empty Swordfish LiveView runtime."
+  @doc """
+  Creates an empty Swordfish LiveView runtime.
+  """
   @spec new() :: t()
   def new, do: %__MODULE__{}
 
-  @doc "Adds a resource to the LiveView runtime."
+  @doc """
+  Adds a resource to the LiveView runtime.
+  """
   @spec add_resource(t(), atom(), Swordfish.Resource.t()) :: t()
   def add_resource(%__MODULE__{resources: resources} = runtime, name, resource)
       when is_atom(name) do
     %{runtime | resources: Map.put(resources, name, resource)}
   end
 
-  @doc "Adds an action to the LiveView runtime."
+  @doc """
+  Adds an action to the LiveView runtime.
+  """
   @spec add_action(t(), Swordfish.Action.t()) :: t()
   def add_action(%__MODULE__{actions: actions} = runtime, %Swordfish.Action{name: name} = action) do
     %{runtime | actions: Map.put(actions, name, action)}
   end
 
-  @doc "Sets the approved context for the LiveView runtime."
+  @doc """
+  Sets the approved context for the LiveView runtime.
+  """
   @spec put_context(t(), Swordfish.Context.t()) :: t()
   def put_context(%__MODULE__{} = runtime, %Swordfish.Context{} = context) do
     %{runtime | context: context}
   end
 
-  @doc "Returns a named resource from the runtime."
+  @doc """
+  Returns a named resource from the runtime.
+  """
   @spec resource(t(), atom()) :: Swordfish.Resource.t() | nil
   def resource(%__MODULE__{resources: resources}, name), do: Map.get(resources, name)
 
-  @doc "Returns a named action from the runtime."
+  @doc """
+  Returns a named action from the runtime.
+  """
   @spec action(t(), atom()) :: Swordfish.Action.t() | nil
   def action(%__MODULE__{actions: actions}, name), do: Map.get(actions, name)
 
@@ -162,5 +188,4 @@ defmodule Swordfish.LiveView do
 
     Swordfish.Action.Capability.new(discovery_module, discovery_name, assigns)
   end
-
 end

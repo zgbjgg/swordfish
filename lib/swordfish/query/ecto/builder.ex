@@ -14,7 +14,8 @@ defmodule Swordfish.Query.Ecto.Builder do
   @doc """
   Applies an association join using a dynamic, allowlisted binding name.
   """
-  @spec apply_association_join(Ecto.Query.t(), atom(), atom(), non_neg_integer()) :: Ecto.Query.t()
+  @spec apply_association_join(Ecto.Query.t(), atom(), atom(), non_neg_integer()) ::
+          Ecto.Query.t()
   def apply_association_join(%Ecto.Query{} = query, association, binding, parent_index)
       when is_atom(association) and is_atom(binding) and is_integer(parent_index) do
     join = %JoinExpr{

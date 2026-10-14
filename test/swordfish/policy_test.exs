@@ -15,9 +15,7 @@ defmodule Swordfish.PolicyTest do
 
     policy =
       Policy.new()
-      |> Policy.add_constraint(
-        &Constraint.where(&1, Q.condition(:organization_id, :eq, 42))
-      )
+      |> Policy.add_constraint(&Constraint.where(&1, Q.condition(:organization_id, :eq, 42)))
 
     result = Policy.apply(policy, query)
 

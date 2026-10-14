@@ -8,7 +8,9 @@ defmodule Swordfish.Query.Constraint do
 
   alias Swordfish.Query.Builder, as: Q
 
-  @doc "Adds a condition to a query using AND semantics."
+  @doc """
+  Adds a condition to a query using AND semantics.
+  """
   @spec where(Swordfish.Query.t(), Swordfish.Query.expression()) :: Swordfish.Query.t()
   def where(query, expression) do
     %{query | where: append_and(query.where, expression)}

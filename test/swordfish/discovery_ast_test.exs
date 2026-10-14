@@ -7,8 +7,7 @@ defmodule Swordfish.DiscoveryASTTest do
   test "discovers a remote function as an MFA source" do
     ast = quote do: Swordfish.TestSupport.Providers.list()
 
-    assert {:ok, [Swordfish.TestSupport.Providers, :list, []]} =
-             AST.source(ast, __MODULE__)
+    assert {:ok, [Swordfish.TestSupport.Providers, :list, []]} = AST.source(ast, __MODULE__)
   end
 
   test "discovers a remote function with arguments" do
@@ -19,17 +18,19 @@ defmodule Swordfish.DiscoveryASTTest do
   end
 
   test "discovers a static list" do
-    ast = quote do
-      [
-        %{id: "manual", name: "Manual"},
-        %{id: "mobile_app", name: "Mobile App"}
-      ]
-    end
+    ast =
+      quote do
+        [
+          %{id: "manual", name: "Manual"},
+          %{id: "mobile_app", name: "Mobile App"}
+        ]
+      end
 
-    assert {:ok, [
-             %{id: "manual", name: "Manual"},
-             %{id: "mobile_app", name: "Mobile App"}
-           ]} = AST.source(ast, __MODULE__)
+    assert {:ok,
+            [
+              %{id: "manual", name: "Manual"},
+              %{id: "mobile_app", name: "Mobile App"}
+            ]} = AST.source(ast, __MODULE__)
   end
 
   test "discovers a field from a remote function" do
@@ -52,11 +53,11 @@ defmodule Swordfish.DiscoveryASTTest do
     assert field.source == ["yesterday", "today", "tomorrow"]
   end
 
-
   test "expands grouped module aliases inside complex function resolvers" do
     ast = quote do: [:two, :one] |> Providers.list()
 
-    assert {:ok, {:function, resolver}} = AST.source(ast, SwordfishDiscoveryASTGroupedAliasFixture)
+    assert {:ok, {:function, resolver}} =
+             AST.source(ast, SwordfishDiscoveryASTGroupedAliasFixture)
 
     expression = resolver.()
 
@@ -73,8 +74,7 @@ defmodule Swordfish.DiscoveryASTTest do
   test "discovers local calls using the current module as the MFA module" do
     ast = quote do: get_entity_list(user.id)
 
-    assert {:ok, [__MODULE__, :get_entity_list, _arguments]} =
-             AST.source(ast, __MODULE__)
+    assert {:ok, [__MODULE__, :get_entity_list, _arguments]} = AST.source(ast, __MODULE__)
   end
 end
 
@@ -89,7 +89,6 @@ defmodule SwordfishDiscoveryASTContextTest do
     assert {:ok, {:context, [:use_extended_list?]}} = AST.source(ast, __MODULE__)
   end
 end
-
 
 defmodule SwordfishDiscoveryASTGroupedAliasFixture do
   alias Swordfish.TestSupport.{Providers, OtherProvider}
